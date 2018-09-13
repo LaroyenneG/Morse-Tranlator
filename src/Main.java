@@ -4,10 +4,9 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-
         MorseConverter converter = MorseConverter.getInstance();
-        converter.readFile();
+        converter.loadEncodeTable();
 
-        converter.playString(".-");
+        converter.playString(converter.encodeText("SOS"));
     }
 }

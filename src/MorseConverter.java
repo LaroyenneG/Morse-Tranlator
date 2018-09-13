@@ -1,6 +1,5 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,11 +43,11 @@ public class MorseConverter {
         return new String(stringCode);
     }
 
-    public String encodeLine(String line) {
+    public String encodeText(String text) {
 
-        line = line.trim().toLowerCase();
+        text = text.trim().toLowerCase();
 
-        String[] words = line.split(" ");
+        String[] words = text.split(" ");
 
         StringBuilder encodeLine = new StringBuilder();
 
@@ -64,7 +63,7 @@ public class MorseConverter {
     }
 
 
-    public void readFile() throws IOException {
+    public void loadEncodeTable() throws IOException {
 
         FileReader fileReader = new FileReader("morse_code.txt");
         BufferedReader reader = new BufferedReader(fileReader);
@@ -127,17 +126,6 @@ public class MorseConverter {
             System.arraycopy(s, 0, signal, position, s.length);
             position += s.length;
         }
-
-
-        try {
-            FileWriter writer = new FileWriter("truc.csv");
-            for (double n : signal) {
-                writer.write(String.valueOf(n) + "\n\r");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
 
         StdAudio.play(signal);
     }
