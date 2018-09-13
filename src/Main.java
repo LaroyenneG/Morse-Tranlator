@@ -19,8 +19,10 @@ public class Main {
 
         frame.add(morse);
 
-        morse.setText("SOS");
+        morse.setText("Il a nicke mon rotor de queu");
         morse.convert();
         morse.play();
+        System.out.println(morse.getText());
+        System.exit(0);
     }
 }

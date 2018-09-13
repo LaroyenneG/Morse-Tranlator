@@ -10,8 +10,8 @@ public class MorseConverter {
 
     public static final char LONG_VALUE = '-';
     public static final char SHORT_VALUE = '.';
-    public static final char SPACE_VALUE = '/';
-    public static final char SPACE_WORD_VALUE = ' ';
+    public static final char SPACE_VALUE = ' ';
+    public static final char SPACE_WORD_VALUE = '/';
 
 
     private static MorseConverter ourInstance = new MorseConverter();
@@ -37,9 +37,6 @@ public class MorseConverter {
 
         for (int i = 0; i < code.length; i++) {
             stringCode.append(code[i]);
-            if (i + 1 < code.length) {
-                stringCode.append(" ");
-            }
         }
 
         return new String(stringCode);
@@ -53,12 +50,18 @@ public class MorseConverter {
 
         StringBuilder encodeLine = new StringBuilder();
 
-        for (String word : words) {
+        for (int i=0; i<words.length; i++) {
             StringBuilder encodeWord = new StringBuilder();
-            for (int i = 0; i < word.length(); i++) {
-                encodeWord.append(encodeChar(word.charAt(i))).append(SPACE_VALUE);
+
+            for (int j = 0; j < words[i].length(); j++) {
+                encodeWord.append(encodeChar(words[i].charAt(j))).append(SPACE_VALUE);
             }
-            encodeLine.append(encodeWord).append(SPACE_WORD_VALUE);
+
+            encodeLine.append(encodeWord);
+
+            if(i+1<words.length) {
+                encodeLine.append(SPACE_WORD_VALUE);
+            }
         }
 
         return new String(encodeLine);
@@ -138,7 +141,7 @@ public class MorseConverter {
 
         final double FREQ = 550.0;
         final double AMP = 1.0;
-        final double TIME = 1.0;
+        final double TIME = 10.0;
 
         double[] signalValue;
 
