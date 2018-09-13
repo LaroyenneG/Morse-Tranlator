@@ -1,7 +1,8 @@
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,34 +109,72 @@ public class MorseConverter {
 
     public void playString(String text) {
 
+        List<double[]> signals = new ArrayList<double[]>();
+
         for (int i = 0; i < text.length(); i++) {
-            playValue(text.charAt(i));
+            signals.add(playValue(text.charAt(i)));
         }
+
+        int len = 0;
+        for (double[] s : signals) {
+            len += s.length;
+        }
+
+        int position = 0;
+        double[] signal = new double[len];
+
+        for (double[] s : signals) {
+            System.arraycopy(s, 0, signal, position, s.length);
+            position += s.length;
+        }
+
+
+        try {
+            FileWriter writer = new FileWriter("truc.csv");
+            for (double n : signal) {
+                writer.write(String.valueOf(n) + "\n\r");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        StdAudio.play(signal);
     }
 
-    private void playValue(char code) {
+    private double[] playValue(char code) {
 
-        double freq = 550;
+        final double FREQ = 550.0;
+        final double AMP = 1.0;
 
-
+        double[] signalValue;
 
         switch (code) {
 
-
             case SHORT_VALUE:
-                StdAudio.play(StdAudio.note(freq, 0.065, 0.5));
+                signalValue = StdAudio.note(FREQ, 0.065, AMP);
                 break;
 
             case LONG_VALUE:
-                StdAudio.play(StdAudio.note(freq, 0.150, 0.5));
+                signalValue = StdAudio.note(FREQ, 0.150, AMP);
                 break;
 
-
             case SPACE_VALUE:
-                StdAudio.play(StdAudio.note(0.0, 0.150, 0.5));
+                signalValue = StdAudio.note(0.0, 0.150, 0.0);
+                break;
+
+            default:
+                signalValue = new double[0];
                 break;
         }
 
-        StdAudio.play(StdAudio.note(freq, 0.065, 0.5));
+        double[] whiteSignal = StdAudio.note(0.0, 0.065, 0.0);
+
+        double[] signal = new double[signalValue.length + whiteSignal.length];
+
+        System.arraycopy(signalValue, 0, signal, 0, signalValue.length);
+        System.arraycopy(whiteSignal, 0, signal, signalValue.length, whiteSignal.length);
+
+        return signal;
     }
 }
