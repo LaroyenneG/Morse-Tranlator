@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.IOException;
 
 public class Main {
@@ -7,6 +8,19 @@ public class Main {
         MorseConverter converter = MorseConverter.getInstance();
         converter.loadEncodeTable();
 
-        converter.playString(converter.encodeText("SOS"));
+
+        JFrame frame = new JFrame();
+
+        frame.setVisible(true);
+        frame.setSize(200, 200);
+
+        Morse morse = new Morse();
+
+
+        frame.add(morse);
+
+        morse.setText("SOS");
+        morse.convert();
+        morse.play();
     }
 }

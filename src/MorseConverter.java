@@ -11,6 +11,7 @@ public class MorseConverter {
     public static final char LONG_VALUE = '-';
     public static final char SHORT_VALUE = '.';
     public static final char SPACE_VALUE = '/';
+    public static final char SPACE_WORD_VALUE = ' ';
 
 
     private static MorseConverter ourInstance = new MorseConverter();
@@ -29,6 +30,7 @@ public class MorseConverter {
 
 
     private String encodeChar(char c) {
+
         char[] code = morseCode.get(c);
 
         StringBuilder stringCode = new StringBuilder();
@@ -54,9 +56,9 @@ public class MorseConverter {
         for (String word : words) {
             StringBuilder encodeWord = new StringBuilder();
             for (int i = 0; i < word.length(); i++) {
-                encodeWord.append(encodeChar(word.charAt(i)));
+                encodeWord.append(encodeChar(word.charAt(i))).append(SPACE_VALUE);
             }
-            encodeLine.append(encodeWord).append(SPACE_VALUE);
+            encodeLine.append(encodeWord).append(SPACE_WORD_VALUE);
         }
 
         return new String(encodeLine);
@@ -106,12 +108,12 @@ public class MorseConverter {
     }
 
 
-    public void playString(String text) {
+    public double[] buildSignal(String text) {
 
         List<double[]> signals = new ArrayList<double[]>();
 
         for (int i = 0; i < text.length(); i++) {
-            signals.add(playValue(text.charAt(i)));
+            signals.add(buildValue(text.charAt(i)));
         }
 
         int len = 0;
@@ -127,28 +129,35 @@ public class MorseConverter {
             position += s.length;
         }
 
-        StdAudio.play(signal);
+        return signal;
     }
 
-    private double[] playValue(char code) {
+
+    private double[] buildValue(char code) {
+
 
         final double FREQ = 550.0;
         final double AMP = 1.0;
+        final double TIME = 1.0;
 
         double[] signalValue;
 
         switch (code) {
 
             case SHORT_VALUE:
-                signalValue = StdAudio.note(FREQ, 0.065, AMP);
+                signalValue = StdAudio.note(FREQ, 0.065 * TIME, AMP);
                 break;
 
             case LONG_VALUE:
-                signalValue = StdAudio.note(FREQ, 0.150, AMP);
+                signalValue = StdAudio.note(FREQ, 0.180 * TIME, AMP);
                 break;
 
             case SPACE_VALUE:
-                signalValue = StdAudio.note(0.0, 0.150, 0.0);
+                signalValue = StdAudio.note(FREQ, 0.065 * TIME, 0.0);
+                break;
+
+            case SPACE_WORD_VALUE:
+                signalValue = StdAudio.note(FREQ, 0.180 * TIME, 0.0);
                 break;
 
             default:
@@ -156,7 +165,7 @@ public class MorseConverter {
                 break;
         }
 
-        double[] whiteSignal = StdAudio.note(0.0, 0.065, 0.0);
+        double[] whiteSignal = StdAudio.note(FREQ, 0.065 * TIME, 0.0);
 
         double[] signal = new double[signalValue.length + whiteSignal.length];
 
