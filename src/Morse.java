@@ -1,3 +1,6 @@
+import javax.accessibility.Accessible;
+import javax.accessibility.AccessibleContext;
+import javax.accessibility.AccessibleRole;
 import java.awt.*;
 
 public class Morse extends Canvas {
@@ -74,6 +77,10 @@ public class Morse extends Canvas {
     public void setText(String text) {
 
         this.text = text;
+    }
+
+    private void fireEEvent(Event event) {
+
     }
 
     public double getSpeed() {
