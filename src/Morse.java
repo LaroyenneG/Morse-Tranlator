@@ -23,16 +23,18 @@ public class Morse extends Canvas {
     @Override
     public void paint(Graphics graphics) {
 
+        final double COEFFICIENT = 5.0;
+
         if (signalCursor >= signal.length) {
             return;
         }
 
         graphics.setColor(SIGNAL_COLOR);
 
-        int rayon = (int) (Math.abs(signal[signalCursor]) * (getWidth() + getHeight()) / 5.0);
+        int rayon = (int) (Math.abs(signal[signalCursor]) * (getWidth() + getHeight()) / COEFFICIENT);
 
-        if (rayon > 1) {
-            graphics.drawOval(getWidth() / 2 - rayon, getHeight() / 2 - rayon, 2 * rayon, 2 * rayon);
+        for (int r = rayon; r >= 1; r -= COEFFICIENT * 2) {
+            graphics.drawOval(getWidth() / 2 - r, getHeight() / 2 - r, 2 * r, 2 * r);
         }
     }
 
