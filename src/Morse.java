@@ -2,7 +2,9 @@ import java.awt.*;
 
 public class Morse extends Canvas {
 
-    private static final Color SIGNAL_COLOR = Color.YELLOW;
+    public static final double DEFAULT_SPEED = 5.0;
+
+    private static final Color SIGNAL_COLOR = Color.CYAN;
     private static final Color BACKGROUND_COLOR = Color.BLACK;
 
     private String text;
@@ -11,11 +13,15 @@ public class Morse extends Canvas {
 
     private int signalCursor;
 
+    private double speed;
+
 
     public Morse() {
+
         setSize(200, 200);
         text = "";
         signal = new double[0];
+        speed = DEFAULT_SPEED;
         setBackground(BACKGROUND_COLOR);
     }
 
@@ -43,7 +49,7 @@ public class Morse extends Canvas {
 
         MorseConverter converter = MorseConverter.getInstance();
         text = converter.encodeText(text);
-        signal = converter.buildSignal(text);
+        signal = converter.buildSignal(text, speed);
     }
 
     public void play() {
@@ -54,6 +60,8 @@ public class Morse extends Canvas {
 
             repaint();
         }
+
+        signalCursor = 0;
 
         StdAudio.close();
     }
@@ -68,9 +76,12 @@ public class Morse extends Canvas {
         this.text = text;
     }
 
+    public double getSpeed() {
+        return speed;
+    }
+
     public void setSpeed(double i) {
 
-        MorseConverter converter = MorseConverter.getInstance();
-        converter.setSpeed(i);
+        speed = i > 0 ? i : DEFAULT_SPEED;
     }
 }

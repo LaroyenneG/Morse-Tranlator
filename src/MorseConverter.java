@@ -8,9 +8,6 @@ import java.util.Map;
 
 public class MorseConverter {
 
-    private static final double DEFAULT_SPEED = 5.0;
-
-    private static double speed;
     private static final char LONG_VALUE = '-';
     private static final char SHORT_VALUE = '.';
     private static final char SPACE_VALUE = ' ';
@@ -27,7 +24,6 @@ public class MorseConverter {
 
     private MorseConverter() {
         morseCode = new HashMap<>();
-        speed = DEFAULT_SPEED;
     }
 
 
@@ -117,12 +113,16 @@ public class MorseConverter {
     }
 
 
-    public double[] buildSignal(String text) {
+    public double[] buildSignal(String text, double speed) {
+
+        if (speed < 0) {
+            return new double[0];
+        }
 
         List<double[]> signals = new ArrayList<double[]>();
 
         for (int i = 0; i < text.length(); i++) {
-            signals.add(buildValue(text.charAt(i)));
+            signals.add(buildValue(text.charAt(i), speed));
         }
 
         int len = 0;
@@ -142,7 +142,7 @@ public class MorseConverter {
     }
 
 
-    private double[] buildValue(char code) {
+    private double[] buildValue(char code, double speed) {
 
 
         final double FREQ = 550.0;
@@ -181,18 +181,5 @@ public class MorseConverter {
         System.arraycopy(whiteSignal, 0, signal, signalValue.length, whiteSignal.length);
 
         return signal;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double i) {
-
-        if (i > 0) {
-            speed = i;
-        } else {
-            speed = DEFAULT_SPEED;
-        }
     }
 }
