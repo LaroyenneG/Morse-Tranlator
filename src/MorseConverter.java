@@ -8,10 +8,10 @@ import java.util.Map;
 
 public class MorseConverter {
 
-    public static final char LONG_VALUE = '-';
-    public static final char SHORT_VALUE = '.';
-    public static final char SPACE_VALUE = ' ';
-    public static final char SPACE_WORD_VALUE = '/';
+    private static final char LONG_VALUE = '-';
+    private static final char SHORT_VALUE = '.';
+    private static final char SPACE_VALUE = ' ';
+    private static final char SPACE_WORD_VALUE = '/';
 
 
     private static MorseConverter ourInstance = new MorseConverter();
