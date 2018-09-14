@@ -2,46 +2,37 @@ import java.awt.*;
 
 public class Morse extends Canvas {
 
-    private static final Color COLOR_ON = Color.YELLOW;
-    private static final Color COLOR_OFF = Color.BLACK;
-    private boolean on;
+    private static final Color SIGNAL_COLOR = Color.YELLOW;
+    private static final Color BACKGROUND_COLOR = Color.BLACK;
 
     private String text;
+
     private double[] signal;
+
+    private int signalCursor;
+
 
     public Morse() {
         setSize(200, 200);
         text = "";
-        on = false;
         signal = new double[0];
-        setBackground(COLOR_OFF);
-        disableLight();
+        setBackground(BACKGROUND_COLOR);
     }
 
 
     @Override
     public void paint(Graphics graphics) {
 
-        final int BORDERS_SIZE = 10;
-
-        graphics.setColor(on ? COLOR_ON : COLOR_OFF);
-
-        graphics.fillRect(BORDERS_SIZE, BORDERS_SIZE, getWidth() - BORDERS_SIZE * 2, getHeight() - BORDERS_SIZE * 2);
-    }
-
-    private void enableLight() {
-
-        if (!on) {
-            on = true;
-            repaint();
+        if (signalCursor >= signal.length) {
+            return;
         }
-    }
 
-    private void disableLight() {
+        graphics.setColor(SIGNAL_COLOR);
 
-        if (on) {
-            on = false;
-            repaint();
+        int rayon = (int) (Math.abs(signal[signalCursor]) * (getWidth() + getHeight()) / 5.0);
+
+        if (rayon > 1) {
+            graphics.drawOval(getWidth() / 2 - rayon, getHeight() / 2 - rayon, 2 * rayon, 2 * rayon);
         }
     }
 
@@ -55,20 +46,14 @@ public class Morse extends Canvas {
 
     public void play() {
 
-        for (double s : signal) {
+        for (signalCursor = 0; signalCursor < signal.length; signalCursor++) {
 
-            if (Math.abs(s) == 0.0) {
-                disableLight();
-            } else {
-                enableLight();
-            }
+            StdAudio.play(signal[signalCursor]);
 
-            StdAudio.play(s);
+            repaint();
         }
 
         StdAudio.close();
-
-        disableLight();
     }
 
     public String getText() {
