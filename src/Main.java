@@ -16,7 +16,7 @@ public class Main {
         Morse morse = new Morse();
         frame.add(morse);
 
-        morse.setText("SOS SOS SOS SOS SOS");
+        morse.setText("SOS");
         morse.convert();
         morse.play();
         morse.setSpeed(1);
