@@ -8,6 +8,9 @@ import java.util.Map;
 
 public class MorseConverter {
 
+    private static final double DEFAULT_SPEED = 5.0;
+
+    private static double speed;
     private static final char LONG_VALUE = '-';
     private static final char SHORT_VALUE = '.';
     private static final char SPACE_VALUE = ' ';
@@ -20,16 +23,19 @@ public class MorseConverter {
         return ourInstance;
     }
 
-
     private Map<Character, char[]> morseCode;
-
 
     private MorseConverter() {
         morseCode = new HashMap<>();
+        speed = DEFAULT_SPEED;
     }
 
 
     private String encodeChar(char c) {
+
+        if (!morseCode.containsKey(c)) {
+            return String.valueOf(c);
+        }
 
         char[] code = morseCode.get(c);
 
@@ -50,7 +56,7 @@ public class MorseConverter {
 
         StringBuilder encodeLine = new StringBuilder();
 
-        for (int i=0; i<words.length; i++) {
+        for (int i = 0; i < words.length; i++) {
             StringBuilder encodeWord = new StringBuilder();
 
             for (int j = 0; j < words[i].length(); j++) {
@@ -59,7 +65,7 @@ public class MorseConverter {
 
             encodeLine.append(encodeWord);
 
-            if(i+1<words.length) {
+            if (i + 1 < words.length) {
                 encodeLine.append(SPACE_WORD_VALUE);
             }
         }
@@ -141,26 +147,25 @@ public class MorseConverter {
 
         final double FREQ = 550.0;
         final double AMP = 1.0;
-        final double TIME = 10.0;
 
         double[] signalValue;
 
         switch (code) {
 
             case SHORT_VALUE:
-                signalValue = StdAudio.note(FREQ, 0.065 * TIME, AMP);
+                signalValue = StdAudio.note(FREQ, 0.065 * speed, AMP);
                 break;
 
             case LONG_VALUE:
-                signalValue = StdAudio.note(FREQ, 0.180 * TIME, AMP);
+                signalValue = StdAudio.note(FREQ, 0.180 * speed, AMP);
                 break;
 
             case SPACE_VALUE:
-                signalValue = StdAudio.note(FREQ, 0.065 * TIME, 0.0);
+                signalValue = StdAudio.note(FREQ, 0.065 * speed, 0.0);
                 break;
 
             case SPACE_WORD_VALUE:
-                signalValue = StdAudio.note(FREQ, 0.180 * TIME, 0.0);
+                signalValue = StdAudio.note(FREQ, 0.180 * speed, 0.0);
                 break;
 
             default:
@@ -168,7 +173,7 @@ public class MorseConverter {
                 break;
         }
 
-        double[] whiteSignal = StdAudio.note(FREQ, 0.065 * TIME, 0.0);
+        double[] whiteSignal = StdAudio.note(FREQ, 0.065 * speed, 0.0);
 
         double[] signal = new double[signalValue.length + whiteSignal.length];
 
@@ -176,5 +181,18 @@ public class MorseConverter {
         System.arraycopy(whiteSignal, 0, signal, signalValue.length, whiteSignal.length);
 
         return signal;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double i) {
+
+        if (i > 0) {
+            speed = i;
+        } else {
+            speed = DEFAULT_SPEED;
+        }
     }
 }

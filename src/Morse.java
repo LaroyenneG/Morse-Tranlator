@@ -67,4 +67,10 @@ public class Morse extends Canvas {
 
         this.text = text;
     }
+
+    public void setSpeed(double i) {
+
+        MorseConverter converter = MorseConverter.getInstance();
+        converter.setSpeed(i);
+    }
 }
