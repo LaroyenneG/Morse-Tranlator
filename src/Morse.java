@@ -4,6 +4,7 @@ public class Morse extends Canvas {
 
     private static final Color COLOR_ON = Color.YELLOW;
     private static final Color COLOR_OFF = Color.BLACK;
+    private boolean on;
 
     private String text;
     private double[] signal;
@@ -11,23 +12,35 @@ public class Morse extends Canvas {
     public Morse() {
         setSize(200, 200);
         text = "";
+        on = false;
         signal = new double[0];
         setBackground(COLOR_OFF);
         disableLight();
     }
 
+
+    @Override
+    public void paint(Graphics graphics) {
+
+        final int BORDERS_SIZE = 10;
+
+        graphics.setColor(on ? COLOR_ON : COLOR_OFF);
+
+        graphics.fillRect(BORDERS_SIZE, BORDERS_SIZE, getWidth() - BORDERS_SIZE * 2, getHeight() - BORDERS_SIZE * 2);
+    }
+
     private void enableLight() {
 
-        if (!getBackground().equals(COLOR_ON)) {
-            setBackground(COLOR_ON);
+        if (!on) {
+            on = true;
             repaint();
         }
     }
 
     private void disableLight() {
 
-        if (!getBackground().equals(COLOR_OFF)) {
-            setBackground(COLOR_OFF);
+        if (on) {
+            on = false;
             repaint();
         }
     }
