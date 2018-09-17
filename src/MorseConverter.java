@@ -1,10 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MorseConverter {
 
@@ -44,105 +41,70 @@ public class MorseConverter {
         return new String(stringCode);
     }
 
-    public String encodeText(String text) {
+    public static double[] buildSignal(String text, double speed) {
 
-        text = text.trim().toLowerCase();
-
-        String[] words = text.split(" ");
-
-        StringBuilder encodeLine = new StringBuilder();
-
-        for (int i = 0; i < words.length; i++) {
-            StringBuilder encodeWord = new StringBuilder();
-
-            for (int j = 0; j < words[i].length(); j++) {
-                encodeWord.append(encodeChar(words[i].charAt(j))).append(SPACE_VALUE);
-            }
-
-            encodeLine.append(encodeWord);
-
-            if (i + 1 < words.length) {
-                encodeLine.append(SPACE_WORD_VALUE);
-            }
-        }
-
-        return new String(encodeLine);
-    }
-
-
-    public void loadEncodeTable() throws IOException {
-
-        FileReader fileReader = new FileReader("morse_code.txt");
-        BufferedReader reader = new BufferedReader(fileReader);
-
-        String line;
-        while ((line = reader.readLine()) != null) {
-
-            line = line.trim().toLowerCase();
-
-            String[] words = line.split(" ");
-            Character[] characters = new Character[words.length];
-
-            for (int i = 0; i < words.length; i++) {
-                if (words[i].length() > 1) {
-                    System.err.println("Invalid format file");
-                    System.exit(-1);
-                }
-                characters[i] = words[i].charAt(0);
-            }
-
-            if (characters.length < 2) {
-                System.out.println("Invalid format file (line)");
-                System.exit(-1);
-            }
-
-
-            char[] code = new char[words.length - 1];
-            for (int i = 1; i < characters.length; i++) {
-
-                if (characters[i] != LONG_VALUE && characters[i] != SHORT_VALUE) {
-                    System.out.println("Invalid format file (value)");
-                    System.exit(-1);
-                }
-
-                code[i - 1] = characters[i];
-            }
-
-            morseCode.put(characters[0], code);
-        }
-    }
-
-
-    public double[] buildSignal(String text, double speed) {
-
-        if (speed < 0) {
+        if (speed <= 0) {
             return new double[0];
         }
 
-        List<double[]> signals = new ArrayList<double[]>();
+        final List<double[]> signals = Collections.synchronizedList(new ArrayList<double[]>());
 
-        for (int i = 0; i < text.length(); i++) {
-            signals.add(buildValue(text.charAt(i), speed));
+        final int textLen = text.length();
+
+        final Thread[] builderThreads = new Thread[textLen];
+
+        for (int i = 0; i < textLen; i++) {
+
+            final double finalSpeed = speed;
+            final char c = text.charAt(i);
+
+            builderThreads[i] = new Thread(() -> signals.add(buildValue(c, finalSpeed)));
+            builderThreads[i].start();
         }
 
-        int len = 0;
-        for (double[] s : signals) {
-            len += s.length;
+        joinAllThreads(builderThreads);
+
+
+        int totalLen = 0;
+        for (double[] segment : signals) {
+            totalLen += segment.length;
         }
+
 
         int position = 0;
-        double[] signal = new double[len];
 
-        for (double[] s : signals) {
-            System.arraycopy(s, 0, signal, position, s.length);
-            position += s.length;
+        double[] signal = new double[totalLen];
+
+        final Thread[] fusionThreads = new Thread[signals.size()];
+
+        for (int i = 0; i < signals.size(); i++) {
+
+            final int index = i;
+            final int p = position;
+
+            fusionThreads[i] = new Thread(() -> System.arraycopy(signals.get(index), 0, signal, p, signals.get(index).length));
+            fusionThreads[i].start();
+            position += signals.get(i).length;
         }
+
+        joinAllThreads(fusionThreads);
 
         return signal;
     }
 
+    private static void joinAllThreads(Thread[] fusionThreads) {
 
-    private double[] buildValue(char code, double speed) {
+        for (Thread thread : fusionThreads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            }
+        }
+    }
+
+    private static double[] buildValue(char code, double speed) {
 
 
         final double FREQ = 550.0;
@@ -178,8 +140,77 @@ public class MorseConverter {
         double[] signal = new double[signalValue.length + whiteSignal.length];
 
         System.arraycopy(signalValue, 0, signal, 0, signalValue.length);
+
         System.arraycopy(whiteSignal, 0, signal, signalValue.length, whiteSignal.length);
 
         return signal;
+    }
+
+    public String encodeText(String text) {
+
+        text = text.trim().toLowerCase();
+
+        String[] words = text.split(" ");
+
+        StringBuilder encodeLine = new StringBuilder();
+
+        for (int i = 0; i < words.length; i++) {
+
+            StringBuilder encodeWord = new StringBuilder();
+
+            for (int j = 0; j < words[i].length(); j++) {
+                encodeWord.append(encodeChar(words[i].charAt(j))).append(SPACE_VALUE);
+            }
+
+            encodeLine.append(encodeWord);
+
+            if (i + 1 < words.length) {
+                encodeLine.append(SPACE_WORD_VALUE);
+            }
+        }
+
+        return new String(encodeLine);
+    }
+
+    public void loadEncodeTable() throws IOException {
+
+        FileReader fileReader = new FileReader("morse_code.txt");
+        BufferedReader reader = new BufferedReader(fileReader);
+
+        String line;
+        while ((line = reader.readLine()) != null) {
+
+            line = line.trim().toLowerCase();
+
+            String[] words = line.split(" ");
+            Character[] characters = new Character[words.length];
+
+            for (int i = 0; i < words.length; i++) {
+                if (words[i].length() > 1) {
+                    System.err.println("Invalid format file");
+                    System.exit(-1);
+                }
+                characters[i] = words[i].charAt(0);
+            }
+
+            if (characters.length < 2) {
+                System.err.println("Invalid format file (line)");
+                System.exit(-1);
+            }
+
+
+            char[] code = new char[words.length - 1];
+            for (int i = 1; i < characters.length; i++) {
+
+                if (characters[i] != LONG_VALUE && characters[i] != SHORT_VALUE) {
+                    System.err.println("Invalid format file (value)");
+                    System.exit(-1);
+                }
+
+                code[i - 1] = characters[i];
+            }
+
+            morseCode.put(characters[0], code);
+        }
     }
 }
