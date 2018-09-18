@@ -11,15 +11,15 @@ public class Main {
         JFrame frame = new JFrame();
 
         frame.setVisible(true);
-        frame.setSize(200, 200);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setSize(300, 500);
 
         Morse morse = new Morse();
         frame.add(morse);
 
-        morse.setText("SOS");
+        morse.setText("SOS je suis mort");
         morse.convert();
         morse.play();
-        morse.setSpeed(1);
 
         System.out.println(morse.getText());
 
