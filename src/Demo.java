@@ -3,10 +3,10 @@ import java.io.IOException;
 
 public class Demo {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, MorseCodeTableException {
 
         MorseConverter converter = MorseConverter.getInstance();
-        converter.loadEncodeTable();
+        converter.loadMorseCodeFile();
 
         JFrame frame = new JFrame();
 
@@ -17,7 +17,8 @@ public class Demo {
         Morse morse = new Morse();
         frame.add(morse);
 
-        morse.setText("Sbhejb erh fierhfuhreiufhire uirheiuf hiuehfuirehf uihreiuh bureiuuuuuuuuuuuuuuuuuuuuuuuuuuuuhreiuhfiure iureh iughriughiurehighirerehgiurehiguhr heriuuhguihreug");
+        morse.setSpeed(1);
+        morse.setText("SOS je suis mort");
         morse.convert();
         morse.play();
 

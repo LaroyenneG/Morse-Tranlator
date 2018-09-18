@@ -104,7 +104,7 @@ public class Morse extends Canvas {
     }
 
     public void setSpeed(double i) {
-        speed = i > 1.0 ? i : DEFAULT_SPEED;
+        speed = i >= 1.0 ? i : DEFAULT_SPEED;
     }
 
     @Override

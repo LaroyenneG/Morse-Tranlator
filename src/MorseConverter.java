@@ -5,8 +5,9 @@ import java.util.*;
 
 public class MorseConverter {
 
-
     private static final int CPU_NUMBER = Runtime.getRuntime().availableProcessors() > 1 ? Runtime.getRuntime().availableProcessors() : 2;
+
+    private static final String MORSE_FILE_NAME = "morse_code.txt";
 
     private static final char LONG_VALUE = '-';
     private static final char SHORT_VALUE = '.';
@@ -163,6 +164,7 @@ public class MorseConverter {
         return signal;
     }
 
+
     public String encodeText(String text) {
 
         text = text.trim().toLowerCase();
@@ -176,58 +178,67 @@ public class MorseConverter {
             StringBuilder encodeWord = new StringBuilder();
 
             for (int j = 0; j < words[i].length(); j++) {
-                encodeWord.append(encodeChar(words[i].charAt(j))).append(SPACE_VALUE);
+                encodeWord.append(encodeChar(words[i].charAt(j)));
+
+                if (j + 1 < words[i].length() || i + 1 < words.length) {
+                    encodeWord.append(SPACE_VALUE);
+                }
+
             }
 
             encodeLine.append(encodeWord);
 
             if (i + 1 < words.length) {
-                encodeLine.append(SPACE_WORD_VALUE);
+                encodeLine.append(SPACE_WORD_VALUE).append(SPACE_VALUE);
             }
         }
+
 
         return new String(encodeLine);
     }
 
-    public void loadEncodeTable() throws IOException {
+    public void loadTranslationLine(String line) throws MorseCodeTableException {
 
-        FileReader fileReader = new FileReader("morse_code.txt");
+        line = line.trim().toLowerCase();
+
+        String[] words = line.split(" ");
+        Character[] characters = new Character[words.length];
+
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].length() > 1) {
+                throw new MorseCodeTableException("Invalid format file");
+            }
+            characters[i] = words[i].charAt(0);
+        }
+
+        if (characters.length < 2) {
+            throw new MorseCodeTableException("Invalid format file (line)");
+        }
+
+
+        char[] code = new char[words.length - 1];
+        for (int i = 1; i < characters.length; i++) {
+
+            if (characters[i] != LONG_VALUE && characters[i] != SHORT_VALUE) {
+                throw new MorseCodeTableException("Invalid format file (value)");
+            }
+
+            code[i - 1] = characters[i];
+        }
+
+        morseCode.put(characters[0], code);
+    }
+
+    public void loadMorseCodeFile() throws IOException, MorseCodeTableException {
+
+        FileReader fileReader = new FileReader(MORSE_FILE_NAME);
         BufferedReader reader = new BufferedReader(fileReader);
 
         String line;
         while ((line = reader.readLine()) != null) {
-
-            line = line.trim().toLowerCase();
-
-            String[] words = line.split(" ");
-            Character[] characters = new Character[words.length];
-
-            for (int i = 0; i < words.length; i++) {
-                if (words[i].length() > 1) {
-                    System.err.println("Invalid format file");
-                    System.exit(-1);
-                }
-                characters[i] = words[i].charAt(0);
-            }
-
-            if (characters.length < 2) {
-                System.err.println("Invalid format file (line)");
-                System.exit(-1);
-            }
-
-
-            char[] code = new char[words.length - 1];
-            for (int i = 1; i < characters.length; i++) {
-
-                if (characters[i] != LONG_VALUE && characters[i] != SHORT_VALUE) {
-                    System.err.println("Invalid format file (value)");
-                    System.exit(-1);
-                }
-
-                code[i - 1] = characters[i];
-            }
-
-            morseCode.put(characters[0], code);
+            loadTranslationLine(line);
         }
+
+        fileReader.close();
     }
 }
