@@ -17,7 +17,7 @@ public class Demo {
         Morse morse = new Morse();
         frame.add(morse);
 
-        morse.setText("SOS je suis mort");
+        morse.setText("Sbhejb erh fierhfuhreiufhire uirheiuf hiuehfuirehf uihreiuh bureiuuuuuuuuuuuuuuuuuuuuuuuuuuuuhreiuhfiure iureh iughriughiurehighirerehgiurehiguhr heriuuhguihreug");
         morse.convert();
         morse.play();
 

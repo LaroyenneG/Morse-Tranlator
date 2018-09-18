@@ -5,6 +5,9 @@ import java.util.*;
 
 public class MorseConverter {
 
+
+    private static final int CPU_NUMBER = Runtime.getRuntime().availableProcessors() > 1 ? Runtime.getRuntime().availableProcessors() : 2;
+
     private static final char LONG_VALUE = '-';
     private static final char SHORT_VALUE = '.';
     private static final char SPACE_VALUE = ' ';
@@ -51,19 +54,24 @@ public class MorseConverter {
 
         final int textLen = text.length();
 
-        final Thread[] builderThreads = new Thread[textLen];
+        final List<Thread> builderThreads = new LinkedList<>();
 
         for (int i = 0; i < textLen; i++) {
 
-            final double finalSpeed = speed;
-            final char c = text.charAt(i);
+            final double FINAL_SPEED = speed;
+            final char C = text.charAt(i);
 
-            builderThreads[i] = new Thread(() -> signals.add(buildValue(c, finalSpeed)));
-            builderThreads[i].start();
+            Thread thread = new Thread(() -> signals.add(buildValue(C, FINAL_SPEED)));
+            thread.start();
+
+            builderThreads.add(thread);
+
+            if (i + 1 % CPU_NUMBER == 0) {
+                joinAllThreads(builderThreads);
+            }
         }
 
         joinAllThreads(builderThreads);
-
 
         int totalLen = 0;
         for (double[] segment : signals) {
@@ -75,15 +83,22 @@ public class MorseConverter {
 
         double[] signal = new double[totalLen];
 
-        final Thread[] fusionThreads = new Thread[signals.size()];
+        final List<Thread> fusionThreads = new LinkedList<>();
 
         for (int i = 0; i < signals.size(); i++) {
 
-            final int index = i;
-            final int p = position;
+            final int INDEX = i;
+            final int P = position;
 
-            fusionThreads[i] = new Thread(() -> System.arraycopy(signals.get(index), 0, signal, p, signals.get(index).length));
-            fusionThreads[i].start();
+            Thread thread = new Thread(() -> System.arraycopy(signals.get(INDEX), 0, signal, P, signals.get(INDEX).length));
+            thread.start();
+
+            fusionThreads.add(thread);
+
+            if (i + 1 % CPU_NUMBER == 0) {
+                joinAllThreads(fusionThreads);
+            }
+
             position += signals.get(i).length;
         }
 
@@ -92,7 +107,7 @@ public class MorseConverter {
         return signal;
     }
 
-    private static void joinAllThreads(Thread[] fusionThreads) {
+    private static void joinAllThreads(List<Thread> fusionThreads) {
 
         for (Thread thread : fusionThreads) {
             try {
@@ -102,6 +117,8 @@ public class MorseConverter {
                 System.exit(-1);
             }
         }
+
+        fusionThreads.clear();
     }
 
     private static double[] buildValue(char code, double speed) {
