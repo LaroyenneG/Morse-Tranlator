@@ -28,22 +28,19 @@ public class MorseConverter {
     }
 
 
-    private String encodeChar(char c) {
+    public static double[] buildNote(double hz, double duration, double amplitude) {
 
-        if (!morseCode.containsKey(c)) {
-            return String.valueOf(c);
+        int n = (int) (StdAudio.SAMPLE_RATE * duration);
+
+        double[] a = new double[n + 1];
+
+        for (int i = 0; i <= n; i++) {
+            a[i] = amplitude * Math.sin(2 * Math.PI * i * hz / StdAudio.SAMPLE_RATE);
         }
 
-        char[] code = morseCode.get(c);
-
-        StringBuilder stringCode = new StringBuilder();
-
-        for (int i = 0; i < code.length; i++) {
-            stringCode.append(code[i]);
-        }
-
-        return new String(stringCode);
+        return a;
     }
+
 
     public static double[] buildSignal(String text, double speed) {
 
@@ -133,27 +130,26 @@ public class MorseConverter {
         switch (code) {
 
             case SHORT_VALUE:
-                signalValue = StdAudio.note(FREQ, 0.065 * speed, AMP);
+                signalValue = buildNote(FREQ, 0.065 * speed, AMP);
                 break;
 
             case LONG_VALUE:
-                signalValue = StdAudio.note(FREQ, 0.180 * speed, AMP);
+                signalValue = buildNote(FREQ, 0.180 * speed, AMP);
                 break;
 
             case SPACE_VALUE:
-                signalValue = StdAudio.note(FREQ, 0.065 * speed, 0.0);
+                signalValue = buildNote(FREQ, 0.065 * speed, 0.0);
                 break;
 
             case SPACE_WORD_VALUE:
-                signalValue = StdAudio.note(FREQ, 0.180 * speed, 0.0);
+                signalValue = buildNote(FREQ, 0.180 * speed, 0.0);
                 break;
 
             default:
-                signalValue = new double[0];
-                break;
+                return new double[0];
         }
 
-        double[] whiteSignal = StdAudio.note(FREQ, 0.065 * speed, 0.0);
+        double[] whiteSignal = buildNote(FREQ, 0.065 * speed, 0.0);
 
         double[] signal = new double[signalValue.length + whiteSignal.length];
 
@@ -164,6 +160,22 @@ public class MorseConverter {
         return signal;
     }
 
+    private String encodeChar(char c) {
+
+        if (!morseCode.containsKey(c)) {
+            return "?";
+        }
+
+        char[] code = morseCode.get(c);
+
+        StringBuilder stringCode = new StringBuilder();
+
+        for (int i = 0; i < code.length; i++) {
+            stringCode.append(code[i]);
+        }
+
+        return new String(stringCode);
+    }
 
     public String encodeText(String text) {
 
@@ -178,12 +190,12 @@ public class MorseConverter {
             StringBuilder encodeWord = new StringBuilder();
 
             for (int j = 0; j < words[i].length(); j++) {
+
                 encodeWord.append(encodeChar(words[i].charAt(j)));
 
                 if (j + 1 < words[i].length() || i + 1 < words.length) {
                     encodeWord.append(SPACE_VALUE);
                 }
-
             }
 
             encodeLine.append(encodeWord);
@@ -228,6 +240,7 @@ public class MorseConverter {
 
         morseCode.put(characters[0], code);
     }
+
 
     public void loadMorseCodeFile() throws IOException, MorseCodeTableException {
 

@@ -19,6 +19,7 @@ public class TestMorseConverter {
         }
 
         Map<String, String> translations = new HashMap<>();
+
         translations.put("SOS", "... --- ...");
         translations.put("Bonjour comment allez vous ?", "-... --- -. .--- --- ..- .-. / -.-. --- -- -- . -. - / .- .-.. .-.. . --.. / ...- --- ..- ... / ..--..");
         translations.put("1 + 1 = 3", ".---- / .-.-. / .---- / -...- / ...--");
@@ -28,6 +29,8 @@ public class TestMorseConverter {
         translations.put("this is a point : .", "- .... .. ... / .. ... / .- / .--. --- .. -. - / ---... / .-.-.-");
         translations.put(" ensisa", ". -. ... .. ... .-");
         translations.put("ensisa ", ". -. ... .. ... .-");
+        translations.put("", "");
+        translations.put("éà", "? ?");
 
 
         for (Map.Entry<String, String> entry : translations.entrySet()) {
@@ -35,8 +38,26 @@ public class TestMorseConverter {
             String sentence = entry.getKey();
             String morseCode = entry.getValue();
 
-            Assertions.assertEquals(converter.encodeText(sentence), morseCode);
+            Assertions.assertEquals(morseCode, converter.encodeText(sentence));
         }
 
+    }
+
+
+    @Test
+    public void testSignal() {
+
+
+        double[] signal = null;
+
+        signal = MorseConverter.buildSignal("", 1.0);
+
+
+        Assertions.assertArrayEquals(new double[0], signal);
+
+        signal = MorseConverter.buildSignal("?", 1.0);
+
+
+        Assertions.assertArrayEquals(new double[0], signal);
     }
 }
