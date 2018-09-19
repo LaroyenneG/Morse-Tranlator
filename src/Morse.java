@@ -57,8 +57,7 @@ public class Morse extends Canvas {
 
     public void convert() {
 
-        MorseConverter converter = MorseConverter.getInstance();
-        text = converter.encodeText(text);
+        text = MorseConverter.encodeText(text);
         signal = MorseConverter.buildSignal(text, speed);
         System.gc();
     }

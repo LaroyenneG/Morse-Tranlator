@@ -3,7 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class MorseConverter {
+public abstract class MorseConverter {
 
     private static final int CPU_NUMBER = Runtime.getRuntime().availableProcessors() > 1 ? Runtime.getRuntime().availableProcessors() : 2;
 
@@ -15,16 +15,17 @@ public class MorseConverter {
     private static final char SPACE_WORD_VALUE = '/';
 
 
-    private static MorseConverter ourInstance = new MorseConverter();
+    private static Map<Character, char[]> morseCode;
 
-    public static MorseConverter getInstance() {
-        return ourInstance;
-    }
+    static {
 
-    private Map<Character, char[]> morseCode;
-
-    private MorseConverter() {
         morseCode = new HashMap<>();
+
+        try {
+            loadMorseCodeFile();
+        } catch (IOException | MorseCodeTableException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -160,7 +161,7 @@ public class MorseConverter {
         return signal;
     }
 
-    private String encodeChar(char c) {
+    private static String encodeChar(char c) {
 
         if (!morseCode.containsKey(c)) {
             return "?";
@@ -177,7 +178,7 @@ public class MorseConverter {
         return new String(stringCode);
     }
 
-    public String encodeText(String text) {
+    public static String encodeText(String text) {
 
         text = text.trim().toLowerCase();
 
@@ -209,7 +210,7 @@ public class MorseConverter {
         return new String(encodeLine);
     }
 
-    public void loadTranslationLine(String line) throws MorseCodeTableException {
+    public static void loadTranslationLine(String line) throws MorseCodeTableException {
 
         line = line.trim().toLowerCase();
 
@@ -242,7 +243,7 @@ public class MorseConverter {
     }
 
 
-    public void loadMorseCodeFile() throws IOException, MorseCodeTableException {
+    public static void loadMorseCodeFile() throws IOException, MorseCodeTableException {
 
         FileReader fileReader = new FileReader(MORSE_FILE_NAME);
         BufferedReader reader = new BufferedReader(fileReader);

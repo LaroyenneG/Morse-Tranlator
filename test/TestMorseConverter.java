@@ -11,13 +11,6 @@ public class TestMorseConverter {
     public void testTranslation() {
 
 
-        MorseConverter converter = MorseConverter.getInstance();
-        try {
-            converter.loadMorseCodeFile();
-        } catch (IOException | MorseCodeTableException e) {
-            Assertions.fail();
-        }
-
         Map<String, String> translations = new HashMap<>();
 
         translations.put("SOS", "... --- ...");
@@ -38,7 +31,7 @@ public class TestMorseConverter {
             String sentence = entry.getKey();
             String morseCode = entry.getValue();
 
-            Assertions.assertEquals(morseCode, converter.encodeText(sentence));
+            Assertions.assertEquals(morseCode, MorseConverter.encodeText(sentence));
         }
 
     }

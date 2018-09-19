@@ -3,10 +3,8 @@ import java.io.IOException;
 
 public class Demo {
 
-    public static void main(String[] args) throws IOException, MorseCodeTableException {
+    public static void main(String[] args) {
 
-        MorseConverter converter = MorseConverter.getInstance();
-        converter.loadMorseCodeFile();
 
         JFrame frame = new JFrame();
 
