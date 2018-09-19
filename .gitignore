@@ -25,3 +25,18 @@ hs_err_pid*
 # idea
 .idea/*
 *.iml
+
+# latex files
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+.*.lb
+
