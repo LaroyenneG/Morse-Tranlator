@@ -15,8 +15,8 @@ public class Demo {
         Morse morse = new Morse();
         frame.add(morse);
 
-        morse.setSpeed(1);
-        morse.setText("SOS je suis mort");
+        morse.setSpeed(2.0);
+        morse.setText("SOS");
         morse.convert();
         morse.play();
 

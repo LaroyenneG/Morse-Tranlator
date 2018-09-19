@@ -52,5 +52,7 @@ public class TestMorseConverter {
 
 
         Assertions.assertArrayEquals(new double[0], signal);
+
+
     }
 }

@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Morse extends Canvas {
 
