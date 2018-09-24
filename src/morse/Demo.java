@@ -146,7 +146,7 @@ public class Demo extends javax.swing.JPanel {
     private void translateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_translateButtonActionPerformed
         morse.setText(inputText.getText());
         morse.convert();
-        morse.setSpeed(speedSlider.getValue());
+        morse.setSpeed((double) speedSlider.getValue());
         playButton.setEnabled(true);
     }//GEN-LAST:event_translateButtonActionPerformed
 
