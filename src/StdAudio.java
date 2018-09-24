@@ -131,8 +131,8 @@ public final class StdAudio {
      */
     public static void play(double[] samples) {
         if (samples == null) throw new IllegalArgumentException("argument to play() is null");
-        for (int i = 0; i < samples.length; i++) {
-            play(samples[i]);
+        for (double sample : samples) {
+            play(sample);
         }
     }
 
@@ -208,7 +208,7 @@ public final class StdAudio {
         byte[] data = new byte[2 * samples.length];
         for (int i = 0; i < samples.length; i++) {
             int temp = (short) (samples[i] * MAX_16_BIT);
-            data[2 * i + 0] = (byte) temp;
+            data[2 * i] = (byte) temp;
             data[2 * i + 1] = (byte) (temp >> 8);
         }
 
@@ -261,7 +261,6 @@ public final class StdAudio {
         // let's try Applet.newAudioClip() instead
         catch (UnsupportedAudioFileException e) {
             playApplet(filename);
-            return;
         }
 
         // something else went wrong
@@ -311,11 +310,7 @@ public final class StdAudio {
             while ((count = ais.read(samples, 0, BUFFER_SIZE)) != -1) {
                 line.write(samples, 0, count);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (UnsupportedAudioFileException e) {
-            e.printStackTrace();
-        } catch (LineUnavailableException e) {
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
             e.printStackTrace();
         } finally {
             if (line != null) {
@@ -343,9 +338,7 @@ public final class StdAudio {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (UnsupportedAudioFileException e) {
             throw new IllegalArgumentException("unsupported audio format: '" + filename + "'", e);
-        } catch (LineUnavailableException e) {
-            throw new IllegalArgumentException("could not play '" + filename + "'", e);
-        } catch (IOException e) {
+        } catch (LineUnavailableException | IOException e) {
             throw new IllegalArgumentException("could not play '" + filename + "'", e);
         }
     }
