@@ -25,6 +25,7 @@ hs_err_pid*
 # idea
 .idea/*
 *.iml
+out/
 
 # latex files
 *.aux
@@ -39,4 +40,3 @@ hs_err_pid*
 *.cb
 *.cb2
 .*.lb
-
