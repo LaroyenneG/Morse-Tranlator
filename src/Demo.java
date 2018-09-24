@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class Demo {
@@ -15,12 +16,11 @@ public class Demo {
         Morse morse = new Morse();
         frame.add(morse);
 
-        morse.setSpeed(2.0);
+        morse.setSpeed(1.0);
         morse.setText("SOS");
         morse.convert();
         morse.play();
 
-        System.out.println(morse.getText());
 
         System.exit(0);
     }

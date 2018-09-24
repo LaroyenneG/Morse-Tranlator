@@ -49,9 +49,9 @@ public abstract class MorseConverter {
             return new double[0];
         }
 
-        final List<double[]> signals = Collections.synchronizedList(new ArrayList<double[]>());
-
         final int textLen = text.length();
+
+        final double[][] signals = new double[textLen][];
 
         final List<Thread> builderThreads = new LinkedList<>();
 
@@ -59,8 +59,9 @@ public abstract class MorseConverter {
 
             final double FINAL_SPEED = speed;
             final char C = text.charAt(i);
+            final int INDEX = i;
 
-            Thread thread = new Thread(() -> signals.add(buildValue(C, FINAL_SPEED)));
+            Thread thread = new Thread(() -> signals[INDEX] = buildValue(C, FINAL_SPEED));
             thread.start();
 
             builderThreads.add(thread);
@@ -84,12 +85,12 @@ public abstract class MorseConverter {
 
         final List<Thread> fusionThreads = new LinkedList<>();
 
-        for (int i = 0; i < signals.size(); i++) {
+        for (int i = 0; i < signals.length; i++) {
 
             final int INDEX = i;
             final int P = position;
 
-            Thread thread = new Thread(() -> System.arraycopy(signals.get(INDEX), 0, signal, P, signals.get(INDEX).length));
+            Thread thread = new Thread(() -> System.arraycopy(signals[INDEX], 0, signal, P, signals[INDEX].length));
             thread.start();
 
             fusionThreads.add(thread);
@@ -98,10 +99,14 @@ public abstract class MorseConverter {
                 joinAllThreads(fusionThreads);
             }
 
-            position += signals.get(i).length;
+            position += signals[i].length;
         }
 
         joinAllThreads(fusionThreads);
+
+
+        /* trim signal */
+
 
         return signal;
     }
@@ -125,37 +130,38 @@ public abstract class MorseConverter {
 
         final double FREQ = 550.0;
         final double AMP = 1.0;
+        final double SHORT_DURATION = 0.065;
+        final double LONG_DURATION = 0.180;
 
         double[] signalValue;
 
         switch (code) {
 
             case SHORT_VALUE:
-                signalValue = buildNote(FREQ, 0.065 * speed, AMP);
+                signalValue = buildNote(FREQ, SHORT_DURATION * speed, AMP);
                 break;
 
             case LONG_VALUE:
-                signalValue = buildNote(FREQ, 0.180 * speed, AMP);
+                signalValue = buildNote(FREQ, LONG_DURATION * speed, AMP);
                 break;
 
             case SPACE_VALUE:
-                signalValue = buildNote(FREQ, 0.065 * speed, 0.0);
+                signalValue = buildNote(FREQ, SHORT_DURATION * speed, 0.0);
                 break;
 
             case SPACE_WORD_VALUE:
-                signalValue = buildNote(FREQ, 0.180 * speed, 0.0);
+                signalValue = buildNote(FREQ, LONG_DURATION * speed, 0.0);
                 break;
 
             default:
                 return new double[0];
         }
 
-        double[] whiteSignal = buildNote(FREQ, 0.065 * speed, 0.0);
+        double[] whiteSignal = buildNote(FREQ, SHORT_DURATION * speed, 0.0);
 
         double[] signal = new double[signalValue.length + whiteSignal.length];
 
         System.arraycopy(signalValue, 0, signal, 0, signalValue.length);
-
         System.arraycopy(whiteSignal, 0, signal, signalValue.length, whiteSignal.length);
 
         return signal;

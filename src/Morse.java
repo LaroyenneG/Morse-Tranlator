@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 public class Morse extends Canvas {
 
@@ -36,23 +37,23 @@ public class Morse extends Canvas {
     @Override
     public void paint(Graphics graphics) {
 
-        final double COEFFICIENT = 3.0;
-
         if (signalCursor >= signal.length) {
             return;
         }
 
+        final double COEFFICIENT = 3.0;
+
+        final int WIDTH = getWidth();
+        final int HEIGHT = getHeight();
+
         graphics.setColor(signalColor);
 
-        final int width = getWidth();
-        final int height = getHeight();
+        final int MIN_SIZE = WIDTH < HEIGHT ? WIDTH : HEIGHT;
 
-        final int minSize = width < height ? width : height;
+        int rayon = (int) (signal[signalCursor] * (MIN_SIZE / COEFFICIENT));
 
-        int rayon = (int) (Math.abs(signal[signalCursor]) * (minSize / COEFFICIENT));
-
-        for (int r = rayon; r >= 1; r -= COEFFICIENT * 2) {
-            graphics.drawOval(width / 2 - r, height / 2 - r, 2 * r, 2 * r);
+        for (int r = rayon; r >= 1; r -= COEFFICIENT) {
+            graphics.drawOval(WIDTH / 2 - r, HEIGHT / 2 - r, 2 * r, 2 * r);
         }
     }
 
@@ -105,11 +106,13 @@ public class Morse extends Canvas {
     }
 
     public void setSpeed(double i) {
-        speed = i >= 1.0 ? i : DEFAULT_SPEED;
+        speed = (i >= 1.0 || i <= 10) ? i : DEFAULT_SPEED;
     }
 
     @Override
     public String toString() {
+
+        final DecimalFormat df = new DecimalFormat("0.000"); // import java.text.DecimalFormat;
 
         StringBuilder builder = new StringBuilder();
 
@@ -120,6 +123,11 @@ public class Morse extends Canvas {
         builder.append("\tSpeed :");
         builder.append(speed);
         builder.append('\n');
+        builder.append("signal :\n");
+        for (double s : signal) {
+            builder.append(df.format(s).replace('.', ','));
+            builder.append('\n');
+        }
 
         return new String(builder);
     }
