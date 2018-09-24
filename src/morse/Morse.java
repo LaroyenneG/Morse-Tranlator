@@ -1,3 +1,4 @@
+package morse;
 
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -140,7 +141,7 @@ public class Morse extends Canvas {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("Morse");
+        builder.append("morse.Morse");
         builder.append('\n');
         builder.append("\tText :");
         builder.append(text);

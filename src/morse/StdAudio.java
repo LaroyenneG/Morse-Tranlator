@@ -1,6 +1,6 @@
-/******************************************************************************
- *  Compilation:  javac StdAudio.java
- *  Execution:    java StdAudio
+package morse; /******************************************************************************
+ *  Compilation:  javac morse.StdAudio.java
+ *  Execution:    java morse.StdAudio
  *  Dependencies: none
  *
  *  Simple library for reading, writing, and manipulating .wav files.
@@ -281,7 +281,7 @@ public final class StdAudio {
             throw new IllegalArgumentException("could not play '" + filename + "'", e);
         }
 
-        // URL url = StdAudio.class.getResource(filename);
+        // URL url = morse.StdAudio.class.getResource(filename);
         if (url == null) {
             throw new IllegalArgumentException("could not play '" + filename + "'");
         }
