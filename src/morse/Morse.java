@@ -83,8 +83,6 @@ public class Morse extends Canvas {
         }
 
         signalCursor = 0;
-
-        StdAudio.close();
     }
 
     private void fireTranslateEvent(TranslateEvent event) {

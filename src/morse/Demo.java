@@ -126,16 +126,30 @@ public class Demo extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void morseTranslate(TranslateEvent evt) {//GEN-FIRST:event_morse1Translate
+
+        Morse morse = (Morse) evt.getSource();
         translateText.setText(morse.getTranslateText());
     }//GEN-LAST:event_morse1Translate
 
-    private void translateButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void translateButtonActionPerformed(ActionEvent evt) {
+
         morse.setText(inputText.getText());
         morse.convert();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }
 
-    private void playButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        morse.play();
-    }//GEN-LAST:event_jButton2ActionPerformed
-    // End of variables declaration//GEN-END:variables
+    private void playButtonActionPerformed(ActionEvent evt) {
+
+
+        final Morse MORSE = morse;
+        final JButton BUTTON = (JButton) evt.getSource();
+
+        BUTTON.setEnabled(false);
+
+
+        Thread thread = new Thread(() -> {
+            MORSE.play();
+            BUTTON.setEnabled(true);
+        });
+        thread.start();
+    }
 }
