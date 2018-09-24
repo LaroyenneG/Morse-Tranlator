@@ -45,7 +45,12 @@ public class Demo extends javax.swing.JPanel {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Demo().setVisible(true);
+                JFrame frame = new JFrame("Morse");
+                frame.add(new Demo());
+                frame.setSize(300, 550);
+                frame.setResizable(false);
+                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                frame.setVisible(true);
             }
         });
     }
