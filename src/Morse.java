@@ -1,7 +1,8 @@
+
 import java.awt.*;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Morse extends Canvas {
 
@@ -23,11 +24,14 @@ public class Morse extends Canvas {
 
     private Color signalColor;
 
+    private List<TranslateListener> listener;
+
 
     public Morse() {
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         text = "";
         signal = new double[0];
+        listener = new ArrayList<>();
         speed = DEFAULT_SPEED;
         signalColor = DEFAULT_SIGNAL_COLOR;
         setBackground(DEFAULT_BACKGROUND_COLOR);
@@ -77,9 +81,21 @@ public class Morse extends Canvas {
         StdAudio.close();
     }
 
-    private void fireEEvent(Event event) {
+    private void fireTranlateEvent(TranslateEvent event) {
+
+        for (TranslateListener listener : listener) {
+            listener.translate(event);
+        }
     }
 
+    public void addTranslateListener(TranslateListener event) {
+        listener.add(event);
+    }
+
+
+    public void removeTranslateListener(TranslateListener listener) {
+        this.listener.remove(listener);
+    }
 
     /*
      * Getter and Setter zone
