@@ -15,6 +15,7 @@ public class Morse extends Canvas {
     private static final Color DEFAULT_BACKGROUND_COLOR = Color.BLACK;
 
     private String text;
+    private String translateText;
 
     private double[] signal;
 
@@ -30,6 +31,7 @@ public class Morse extends Canvas {
     public Morse() {
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         text = "";
+        translateText = "";
         signal = new double[0];
         listener = new ArrayList<>();
         speed = DEFAULT_SPEED;
@@ -64,8 +66,11 @@ public class Morse extends Canvas {
 
     public void convert() {
 
-        text = MorseConverter.encodeText(text);
-        signal = MorseConverter.buildSignal(text, speed);
+        translateText = MorseConverter.encodeText(text);
+        signal = MorseConverter.buildSignal(translateText, speed);
+
+        fireTranslateEvent(new TranslateEvent(this));
+
         System.gc();
     }
 
@@ -81,7 +86,7 @@ public class Morse extends Canvas {
         StdAudio.close();
     }
 
-    private void fireTranlateEvent(TranslateEvent event) {
+    private void fireTranslateEvent(TranslateEvent event) {
 
         for (TranslateListener listener : listener) {
             listener.translate(event);
@@ -91,7 +96,6 @@ public class Morse extends Canvas {
     public void addTranslateListener(TranslateListener event) {
         listener.add(event);
     }
-
 
     public void removeTranslateListener(TranslateListener listener) {
         this.listener.remove(listener);
@@ -123,6 +127,10 @@ public class Morse extends Canvas {
 
     public void setSpeed(double i) {
         speed = (i >= 1.0 || i <= 10) ? i : DEFAULT_SPEED;
+    }
+
+    public String getTranslateText() {
+        return translateText;
     }
 
     @Override

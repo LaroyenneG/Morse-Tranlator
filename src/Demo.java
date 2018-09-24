@@ -1,6 +1,4 @@
 import javax.swing.*;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class Demo {
 
@@ -21,6 +19,7 @@ public class Demo {
         morse.convert();
         morse.play();
 
+        System.out.println(morse.getTranslateText());
 
         System.exit(0);
     }
