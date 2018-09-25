@@ -25,6 +25,7 @@ public class TestMorseConverter {
         translations.put("ensisa ", ". -. ... .. ... .-");
         translations.put("", "");
         translations.put("éà", "? ?");
+        translations.put("SOS\nSOS", "... --- ... / ... --- ...");
 
 
         for (Map.Entry<String, String> entry : translations.entrySet()) {

@@ -69,9 +69,7 @@ public class Morse extends Canvas {
 
         translateText = MorseConverter.encodeText(text);
         signal = MorseConverter.buildSignal(translateText, speed);
-
         fireTranslateEvent(new TranslateEvent(this));
-
         System.gc();
     }
 

@@ -38,13 +38,13 @@ public abstract class MorseConverter {
 
         int n = (int) (StdAudio.SAMPLE_RATE * duration);
 
-        double[] a = new double[n + 1];
+        double[] signal = new double[n + 1];
 
         for (int i = 0; i <= n; i++) {
-            a[i] = amplitude * Math.sin(2 * Math.PI * i * hz / StdAudio.SAMPLE_RATE);
+            signal[i] = amplitude * Math.sin(2 * Math.PI * i * hz / StdAudio.SAMPLE_RATE);
         }
 
-        return a;
+        return signal;
     }
 
 
@@ -191,7 +191,7 @@ public abstract class MorseConverter {
 
     public static String encodeText(String text) {
 
-        text = text.trim().toLowerCase();
+        text = text.trim().toLowerCase().replace(System.lineSeparator(), " ");
 
         String[] words = text.split(" ");
 

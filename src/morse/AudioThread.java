@@ -2,25 +2,27 @@ package morse;
 
 public class AudioThread extends Thread {
 
+    private Demo demo;
 
-    private Demo panel;
 
-
-    public AudioThread(Demo panel) {
-        this.panel = panel;
+    public AudioThread(Demo demo) {
+        this.demo = demo;
     }
 
     @Override
     public void run() {
+
         while (!isInterrupted()) {
 
             try {
                 standby();
-                panel.lockElements();
-                panel.getMorse().play();
-                panel.unlockElements();
+                demo.lockElements();
+                demo.getMorse().play();
+                demo.unlockElements();
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                break;
             }
         }
     }
