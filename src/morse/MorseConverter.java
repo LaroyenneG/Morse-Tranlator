@@ -10,8 +10,6 @@ import java.util.Map;
 
 public abstract class MorseConverter {
 
-    private static final int CPU_NUMBER = Runtime.getRuntime().availableProcessors() > 1 ? Runtime.getRuntime().availableProcessors() : 2;
-
     private static final String MORSE_FILE_NAME = "morse_code.txt";
 
     private static final char LONG_VALUE = '-';
@@ -65,22 +63,8 @@ public abstract class MorseConverter {
 
         for (int i = 0; i < textLen; i++) {
 
-            final double FINAL_SPEED = speed;
-            final char C = text.charAt(i);
-            final int INDEX = i;
-
-            Thread thread = new Thread(() -> signals[INDEX] = buildValue(C, FINAL_SPEED, amp));
-
-            thread.start();
-
-            builderThreads.add(thread);
-
-            if (i + 1 % CPU_NUMBER == 0) {
-                joinAllThreads(builderThreads);
-            }
+            signals[i] = buildValue(text.charAt(i), speed, amp);
         }
-
-        joinAllThreads(builderThreads);
 
         int totalLen = 0;
         for (double[] segment : signals) {
@@ -92,44 +76,16 @@ public abstract class MorseConverter {
 
         double[] signal = new double[totalLen];
 
-        final List<Thread> fusionThreads = new LinkedList<>();
 
         for (int i = 0; i < signals.length; i++) {
 
-            final int INDEX = i;
-            final int P = position;
-
-            Thread thread = new Thread(() -> System.arraycopy(signals[INDEX], 0, signal, P, signals[INDEX].length));
-            thread.start();
-
-            fusionThreads.add(thread);
-
-            if (i + 1 % CPU_NUMBER == 0) {
-                joinAllThreads(fusionThreads);
-            }
+            System.arraycopy(signals[i], 0, signal, position, signals[i].length);
 
             position += signals[i].length;
         }
 
-        joinAllThreads(fusionThreads);
-
 
         return signal;
-    }
-
-
-    private static void joinAllThreads(List<Thread> fusionThreads) {
-
-        for (Thread thread : fusionThreads) {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                System.exit(-1);
-            }
-        }
-
-        fusionThreads.clear();
     }
 
 

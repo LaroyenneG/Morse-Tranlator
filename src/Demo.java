@@ -7,6 +7,7 @@
 import morse.Morse;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author guillaume laroyenne
@@ -94,6 +95,7 @@ public class Demo extends javax.swing.JPanel {
         translateText.setColumns(20);
         translateText.setRows(5);
         translateText.setEditable(false);
+        translateText.setFont(new Font("SansSerif", Font.BOLD, 15));
         translateScrollPane.setViewportView(translateText);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
