@@ -45,12 +45,12 @@ public class TestMorseConverter {
 
         double[] signal = null;
 
-        signal = MorseConverter.buildSignal("", 1.0);
+        signal = MorseConverter.buildSignal("", 1.0, 0.5);
 
 
         Assertions.assertArrayEquals(new double[0], signal);
 
-        signal = MorseConverter.buildSignal("?", 1.0);
+        signal = MorseConverter.buildSignal("?", 1.0, 0.5);
 
 
         Assertions.assertArrayEquals(new double[0], signal);

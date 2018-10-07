@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package morse;
+
+import morse.Morse;
 
 import javax.swing.*;
 
@@ -17,6 +18,7 @@ public class Demo extends javax.swing.JPanel {
     private morse.Morse morse;
     private javax.swing.JButton playButton;
     private javax.swing.JSlider speedSlider;
+    private javax.swing.JSlider ampSlider;
     private javax.swing.JButton translateButton;
     private javax.swing.JScrollPane translateScrollPane;
     private javax.swing.JTextArea translateText;
@@ -61,6 +63,7 @@ public class Demo extends javax.swing.JPanel {
         translateButton = new javax.swing.JButton();
         playButton = new javax.swing.JButton();
         speedSlider = new javax.swing.JSlider();
+        ampSlider = new javax.swing.JSlider();
         inputScrollPane = new javax.swing.JScrollPane();
         inputText = new javax.swing.JTextArea();
         translateScrollPane = new javax.swing.JScrollPane();
@@ -74,10 +77,15 @@ public class Demo extends javax.swing.JPanel {
 
         playButton.setText("Play");
         playButton.addActionListener(this::playButtonActionPerformed);
+        playButton.setEnabled(false);
 
-        speedSlider.setMaximum(10);
-        speedSlider.setMinimum(1);
-        speedSlider.setValue(2);
+        speedSlider.setMaximum(100);
+        speedSlider.setMinimum(10);
+        speedSlider.setValue(20);
+
+        ampSlider.setMaximum(100);
+        ampSlider.setMinimum(0);
+        ampSlider.setValue(50);
 
         inputText.setColumns(20);
         inputText.setRows(5);
@@ -96,6 +104,8 @@ public class Demo extends javax.swing.JPanel {
                                 .addContainerGap()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(speedSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(ampSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+
                                         .addGroup(layout.createSequentialGroup()
                                                 .addComponent(translateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -116,6 +126,7 @@ public class Demo extends javax.swing.JPanel {
                                 .addComponent(inputScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(speedSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(ampSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(translateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -126,10 +137,15 @@ public class Demo extends javax.swing.JPanel {
 
     private void translateButtonActionPerformed(java.awt.event.ActionEvent evt) {
 
-        morse.setText(inputText.getText());
-        morse.convert();
-        morse.setSpeed((double) speedSlider.getValue());
-        playButton.setEnabled(true);
+        Thread thread = new Thread(() -> {
+            lockElements();
+            morse.setText(inputText.getText());
+            morse.setSpeed(speedSlider.getValue() / 10.0);
+            morse.setAmplitude(ampSlider.getValue() / 100.0);
+            morse.convert();
+        });
+
+        thread.start();
     }
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -137,8 +153,11 @@ public class Demo extends javax.swing.JPanel {
     }
 
     private void morseTranslate(morse.TranslateEvent evt) {
+
         Morse morse = (Morse) evt.getSource();
         translateText.setText(morse.getTranslateText());
+
+        unlockElements();
     }
 
     public Morse getMorse() {
@@ -151,6 +170,7 @@ public class Demo extends javax.swing.JPanel {
         translateText.setEnabled(false);
         inputText.setEnabled(false);
         speedSlider.setEnabled(false);
+        ampSlider.setEnabled(false);
     }
 
     public void unlockElements() {
@@ -159,5 +179,6 @@ public class Demo extends javax.swing.JPanel {
         translateText.setEnabled(true);
         inputText.setEnabled(true);
         speedSlider.setEnabled(true);
+        ampSlider.setEnabled(true);
     }
 }

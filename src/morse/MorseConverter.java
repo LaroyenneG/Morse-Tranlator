@@ -19,6 +19,8 @@ public abstract class MorseConverter {
     private static final char SPACE_VALUE = ' ';
     private static final char SPACE_WORD_VALUE = '/';
 
+    private static final char UNKNOWN_CHAR = '?';
+
 
     private static Map<Character, char[]> morseCode;
 
@@ -30,11 +32,12 @@ public abstract class MorseConverter {
             loadMorseCodeFile();
         } catch (IOException | MorseCodeTableException e) {
             e.printStackTrace();
+            System.exit(-1);
         }
     }
 
 
-    public static double[] buildNote(double hz, double duration, double amplitude) {
+    private static double[] buildNote(double hz, double duration, double amplitude) {
 
         int n = (int) (StdAudio.SAMPLE_RATE * duration);
 
@@ -48,7 +51,7 @@ public abstract class MorseConverter {
     }
 
 
-    public static double[] buildSignal(String text, double speed) {
+    public static double[] buildSignal(String text, double speed, double amp) {
 
         if (speed <= 0) {
             return new double[0];
@@ -66,7 +69,8 @@ public abstract class MorseConverter {
             final char C = text.charAt(i);
             final int INDEX = i;
 
-            Thread thread = new Thread(() -> signals[INDEX] = buildValue(C, FINAL_SPEED));
+            Thread thread = new Thread(() -> signals[INDEX] = buildValue(C, FINAL_SPEED, amp));
+
             thread.start();
 
             builderThreads.add(thread);
@@ -110,11 +114,9 @@ public abstract class MorseConverter {
         joinAllThreads(fusionThreads);
 
 
-        /* trim signal */
-
-
         return signal;
     }
+
 
     private static void joinAllThreads(List<Thread> fusionThreads) {
 
@@ -130,11 +132,11 @@ public abstract class MorseConverter {
         fusionThreads.clear();
     }
 
-    private static double[] buildValue(char code, double speed) {
+
+    private static double[] buildValue(char code, double speed, double amp) {
 
 
         final double FREQ = 550.0;
-        final double AMP = 1.0;
         final double SHORT_DURATION = 0.065;
         final double LONG_DURATION = 0.180;
 
@@ -143,11 +145,11 @@ public abstract class MorseConverter {
         switch (code) {
 
             case SHORT_VALUE:
-                signalValue = buildNote(FREQ, SHORT_DURATION * speed, AMP);
+                signalValue = buildNote(FREQ, SHORT_DURATION * speed, amp);
                 break;
 
             case LONG_VALUE:
-                signalValue = buildNote(FREQ, LONG_DURATION * speed, AMP);
+                signalValue = buildNote(FREQ, LONG_DURATION * speed, amp);
                 break;
 
             case SPACE_VALUE:
@@ -167,6 +169,7 @@ public abstract class MorseConverter {
         double[] signal = new double[signalValue.length + whiteSignal.length];
 
         System.arraycopy(signalValue, 0, signal, 0, signalValue.length);
+
         System.arraycopy(whiteSignal, 0, signal, signalValue.length, whiteSignal.length);
 
         return signal;
@@ -175,7 +178,7 @@ public abstract class MorseConverter {
     private static String encodeChar(char c) {
 
         if (!morseCode.containsKey(c)) {
-            return "?";
+            return String.valueOf(UNKNOWN_CHAR);
         }
 
         char[] code = morseCode.get(c);
@@ -188,6 +191,7 @@ public abstract class MorseConverter {
 
         return new String(stringCode);
     }
+
 
     public static String encodeText(String text) {
 
@@ -221,7 +225,8 @@ public abstract class MorseConverter {
         return new String(encodeLine);
     }
 
-    public static void loadTranslationLine(String line) throws MorseCodeTableException {
+
+    private static void loadTranslationLine(String line) throws MorseCodeTableException {
 
         line = line.trim().toLowerCase();
 
@@ -254,7 +259,7 @@ public abstract class MorseConverter {
     }
 
 
-    public static void loadMorseCodeFile() throws IOException, MorseCodeTableException {
+    private static void loadMorseCodeFile() throws IOException, MorseCodeTableException {
 
         FileReader fileReader = new FileReader(MORSE_FILE_NAME);
         BufferedReader reader = new BufferedReader(fileReader);

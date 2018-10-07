@@ -7,6 +7,7 @@ import java.util.List;
 
 public class Morse extends Canvas {
 
+    public static final double DEFAULT_AMP = 1.0;
     public static final double DEFAULT_SPEED = 5.0;
 
     public static final int DEFAULT_WIDTH = 200;
@@ -23,6 +24,7 @@ public class Morse extends Canvas {
     private int signalCursor;
 
     private double speed;
+    private double amplitude;
 
     private Color signalColor;
 
@@ -30,14 +32,17 @@ public class Morse extends Canvas {
 
 
     public Morse() {
+
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        setBackground(DEFAULT_BACKGROUND_COLOR);
+
         text = "";
         translateText = "";
         signal = new double[0];
         listener = new ArrayList<>();
         speed = DEFAULT_SPEED;
+        amplitude = DEFAULT_AMP;
         signalColor = DEFAULT_SIGNAL_COLOR;
-        setBackground(DEFAULT_BACKGROUND_COLOR);
     }
 
 
@@ -48,7 +53,7 @@ public class Morse extends Canvas {
             return;
         }
 
-        final double COEFFICIENT = 3.0;
+        final double COEFFICIENT = 2.0;
 
         final int WIDTH = getWidth();
         final int HEIGHT = getHeight();
@@ -67,10 +72,12 @@ public class Morse extends Canvas {
 
     public void convert() {
 
-        translateText = MorseConverter.encodeText(text);
-        signal = MorseConverter.buildSignal(translateText, speed);
-        fireTranslateEvent(new TranslateEvent(this));
+        signal = null;
         System.gc();
+        translateText = MorseConverter.encodeText(text);
+        signal = MorseConverter.buildSignal(translateText, speed, amplitude);
+        System.gc();
+        fireTranslateEvent(new TranslateEvent(this));
     }
 
     public void play() {
@@ -98,8 +105,31 @@ public class Morse extends Canvas {
         this.listener.remove(listener);
     }
 
+    @Override
+    public String toString() {
+
+        final DecimalFormat df = new DecimalFormat("0.000"); // import java.text.DecimalFormat;
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("morse.Morse");
+        builder.append('\n');
+        builder.append("\tText :");
+        builder.append(text);
+        builder.append("\tSpeed :");
+        builder.append(speed);
+        builder.append('\n');
+        builder.append("signal :\n");
+        for (double s : signal) {
+            builder.append(df.format(s).replace('.', ','));
+            builder.append('\n');
+        }
+
+        return new String(builder);
+    }
+
     /*
-     * Getter and Setter zone
+     * Getters and Setters zone
      */
 
     public String getText() {
@@ -122,34 +152,19 @@ public class Morse extends Canvas {
         return speed;
     }
 
-    public void setSpeed(double i) {
-        speed = (i >= 1.0 || i <= 10.0) ? i : DEFAULT_SPEED;
+    public void setSpeed(double speed) {
+        this.speed = (speed >= 1.0 || speed <= 10.0) ? speed : DEFAULT_SPEED;
     }
 
     public String getTranslateText() {
         return translateText;
     }
 
-    @Override
-    public String toString() {
+    public double getAmplitude() {
+        return amplitude;
+    }
 
-        final DecimalFormat df = new DecimalFormat("0.000"); // import java.text.DecimalFormat;
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("morse.Morse");
-        builder.append('\n');
-        builder.append("\tText :");
-        builder.append(text);
-        builder.append("\tSpeed :");
-        builder.append(speed);
-        builder.append('\n');
-        builder.append("signal :\n");
-        for (double s : signal) {
-            builder.append(df.format(s).replace('.', ','));
-            builder.append('\n');
-        }
-
-        return new String(builder);
+    public void setAmplitude(double amp) {
+        this.amplitude = (amp >= 0.0 && amp <= 1.0) ? amp : DEFAULT_AMP;
     }
 }

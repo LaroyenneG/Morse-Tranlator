@@ -1,5 +1,3 @@
-package morse;
-
 public class AudioThread extends Thread {
 
     private Demo demo;
@@ -15,7 +13,9 @@ public class AudioThread extends Thread {
         while (!isInterrupted()) {
 
             try {
+
                 standby();
+
                 demo.lockElements();
                 demo.getMorse().play();
                 demo.unlockElements();
