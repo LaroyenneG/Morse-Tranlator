@@ -1,7 +1,10 @@
 public class AudioThread extends Thread {
 
-    private Demo demo;
+    /*
 
+     */
+
+    private Demo demo;
 
     public AudioThread(Demo demo) {
         this.demo = demo;
@@ -27,7 +30,7 @@ public class AudioThread extends Thread {
         }
     }
 
-    public synchronized void play() {
+    public synchronized void playSignal() {
         notify();
     }
 

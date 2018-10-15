@@ -28,8 +28,9 @@ public abstract class MorseConverter {
 
         try {
             loadMorseCodeFile();
-        } catch (IOException | MorseCodeTableException e) {
+        } catch (IOException | MorseConverterException e) {
             e.printStackTrace();
+            System.err.println("Fatal error, can't to load the translation table");
             System.exit(-1);
         }
     }
@@ -182,7 +183,7 @@ public abstract class MorseConverter {
     }
 
 
-    private static void loadTranslationLine(String line) throws MorseCodeTableException {
+    private static void loadTranslationLine(String line) throws MorseConverterException {
 
         line = line.trim().toLowerCase();
 
@@ -191,13 +192,13 @@ public abstract class MorseConverter {
 
         for (int i = 0; i < words.length; i++) {
             if (words[i].length() > 1) {
-                throw new MorseCodeTableException("Invalid format file");
+                throw new MorseConverterException("Invalid format file");
             }
             characters[i] = words[i].charAt(0);
         }
 
         if (characters.length < 2) {
-            throw new MorseCodeTableException("Invalid format file (line)");
+            throw new MorseConverterException("Invalid format file (line)");
         }
 
 
@@ -205,7 +206,7 @@ public abstract class MorseConverter {
         for (int i = 1; i < characters.length; i++) {
 
             if (characters[i] != LONG_VALUE && characters[i] != SHORT_VALUE) {
-                throw new MorseCodeTableException("Invalid format file (value)");
+                throw new MorseConverterException("Invalid format file (value)");
             }
 
             code[i - 1] = characters[i];
@@ -215,9 +216,10 @@ public abstract class MorseConverter {
     }
 
 
-    private static void loadMorseCodeFile() throws IOException, MorseCodeTableException {
+    private static void loadMorseCodeFile() throws IOException, MorseConverterException {
 
         FileReader fileReader = new FileReader(MORSE_FILE_NAME);
+
         BufferedReader reader = new BufferedReader(fileReader);
 
         String line;

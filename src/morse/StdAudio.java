@@ -51,7 +51,7 @@ public final class StdAudio {
     private static final int SAMPLE_BUFFER_SIZE = 4096;
 
 
-    private static SourceDataLine line;   // to play the sound
+    private static SourceDataLine line;   // to playSignal the sound
     private static byte[] buffer;         // our internal buffer
     private static int bufferSize = 0;    // number of samples currently in internal buffer
 
@@ -99,7 +99,7 @@ public final class StdAudio {
      * Writes one sample (between -1.0 and +1.0) to standard audio.
      * If the sample is outside the range, it will be clipped.
      *
-     * @param sample the sample to play
+     * @param sample the sample to playSignal
      * @throws IllegalArgumentException if the sample is {@code Double.NaN}
      */
     public static void play(double sample) {
@@ -125,12 +125,12 @@ public final class StdAudio {
      * Writes the array of samples (between -1.0 and +1.0) to standard audio.
      * If a sample is outside the range, it will be clipped.
      *
-     * @param samples the array of samples to play
+     * @param samples the array of samples to playSignal
      * @throws IllegalArgumentException if any sample is {@code Double.NaN}
      * @throws IllegalArgumentException if {@code samples} is {@code null}
      */
     public static void play(double[] samples) {
-        if (samples == null) throw new IllegalArgumentException("argument to play() is null");
+        if (samples == null) throw new IllegalArgumentException("argument to playSignal() is null");
         for (double sample : samples) {
             play(sample);
         }
@@ -233,7 +233,7 @@ public final class StdAudio {
      * Plays an audio file (in .wav, .mid, or .au format) in a background thread.
      *
      * @param filename the name of the audio file
-     * @throws IllegalArgumentException if unable to play {@code filename}
+     * @throws IllegalArgumentException if unable to playSignal {@code filename}
      * @throws IllegalArgumentException if {@code filename} is {@code null}
      */
     public static synchronized void play(final String filename) {
@@ -265,25 +265,25 @@ public final class StdAudio {
 
         // something else went wrong
         catch (IOException ioe) {
-            throw new IllegalArgumentException("could not play '" + filename + "'", ioe);
+            throw new IllegalArgumentException("could not playSignal '" + filename + "'", ioe);
         }
 
     }
 
 
-    // play sound file using Applet.newAudioClip();
+    // playSignal sound file using Applet.newAudioClip();
     private static void playApplet(String filename) {
         URL url = null;
         try {
             File file = new File(filename);
             if (file.canRead()) url = file.toURI().toURL();
         } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("could not play '" + filename + "'", e);
+            throw new IllegalArgumentException("could not playSignal '" + filename + "'", e);
         }
 
         // URL url = morse.StdAudio.class.getResource(filename);
         if (url == null) {
-            throw new IllegalArgumentException("could not play '" + filename + "'");
+            throw new IllegalArgumentException("could not playSignal '" + filename + "'");
         }
 
         AudioClip clip = Applet.newAudioClip(url);
@@ -291,7 +291,7 @@ public final class StdAudio {
     }
 
     // https://www3.ntu.edu.sg/home/ehchua/programming/java/J8c_PlayingSound.html
-    // play a wav or aif file
+    // playSignal a wav or aif file
     // javax.sound.sampled.Clip fails for long clips (on some systems)
     private static void stream(String filename) {
         SourceDataLine line = null;
@@ -339,7 +339,7 @@ public final class StdAudio {
         } catch (UnsupportedAudioFileException e) {
             throw new IllegalArgumentException("unsupported audio format: '" + filename + "'", e);
         } catch (LineUnavailableException | IOException e) {
-            throw new IllegalArgumentException("could not play '" + filename + "'", e);
+            throw new IllegalArgumentException("could not playSignal '" + filename + "'", e);
         }
     }
 }
