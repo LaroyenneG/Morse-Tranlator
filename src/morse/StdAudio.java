@@ -1,6 +1,7 @@
-package morse; /******************************************************************************
- *  Compilation:  javac morse.StdAudio.java
- *  Execution:    java morse.StdAudio
+package morse;
+/******************************************************************************
+ *  Compilation:  javac StdAudio.java
+ *  Execution:    java StdAudio
  *  Dependencies: none
  *
  *  Simple library for reading, writing, and manipulating .wav files.

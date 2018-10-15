@@ -31,7 +31,7 @@ public class Demo extends javax.swing.JPanel {
 
     public Demo() {
         initComponents();
-        playerThread = new AudioThread(this);
+        playerThread = new AudioThread(this); // Création du thread de lecture audio
         playerThread.start();
     }
 
@@ -53,7 +53,7 @@ public class Demo extends javax.swing.JPanel {
         java.awt.EventQueue.invokeLater(() -> {
             JFrame frame = new JFrame("Morse");
             frame.add(new Demo());
-            frame.setSize(300, 550);
+            frame.setSize(300, 600);
             frame.setResizable(false);
             frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             frame.setVisible(true);
@@ -103,11 +103,11 @@ public class Demo extends javax.swing.JPanel {
         translateText.setFont(new Font("SansSerif", Font.BOLD, 15));
         translateScrollPane.setViewportView(translateText);
 
-        speedLabel.setText("Amplitude :");
-        speedLabel.setFont(new Font("Serif", Font.ITALIC, 10));
+        speedLabel.setText("Vitesse :");
+        speedLabel.setFont(new Font("Arial", Font.ITALIC, 10));
 
         ampLabel.setText("Amplitude :");
-        ampLabel.setFont(new Font("Serif", Font.ITALIC, 10));
+        ampLabel.setFont(new Font("Arial", Font.ITALIC, 10));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -116,7 +116,9 @@ public class Demo extends javax.swing.JPanel {
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(speedLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(speedSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(ampLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(ampSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 
                                         .addGroup(layout.createSequentialGroup()
@@ -138,7 +140,9 @@ public class Demo extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(inputScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(speedLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(speedSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(ampLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(ampSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -155,8 +159,8 @@ public class Demo extends javax.swing.JPanel {
             // Les composants seront automatiquement déverrouillés lorsque l'événement sera provoqué
 
             morse.setText(inputText.getText());
-            morse.setSpeed(speedSlider.getValue() / 10.0);
-            morse.setAmplitude(ampSlider.getValue() / 100.0);
+            morse.setSpeed((double) speedSlider.getMaximum() / speedSlider.getValue());
+            morse.setAmplitude((double) ampSlider.getValue() / ampSlider.getMaximum());
 
             morse.convert();
         });
@@ -173,18 +177,22 @@ public class Demo extends javax.swing.JPanel {
         playerThread.playSignal();
     }
 
+
+    /* Fonction appelée par l’événement de traduction */
     private void morseTranslate(morse.TranslateEvent evt) {
 
         Morse morse = (Morse) evt.getSource();
-        translateText.setText(morse.getTranslateText());
 
-        unlockElements();
+        translateText.setText(morse.getTranslateText()); // On affiche le texte traduit
+
+        unlockElements(); // Le traitement est terminé, on rend la main à l'utilisateur
     }
 
     public Morse getMorse() {
         return morse;
     }
 
+    /* Rends les composants de la fenêtre accessible à l'utilisateur */
     public void lockElements() {
         playButton.setEnabled(false);
         translateButton.setEnabled(false);
@@ -194,6 +202,7 @@ public class Demo extends javax.swing.JPanel {
         ampSlider.setEnabled(false);
     }
 
+    /* Verrouille les composants de la fenêtre à l'utilisateur */
     public void unlockElements() {
         playButton.setEnabled(true);
         translateButton.setEnabled(true);

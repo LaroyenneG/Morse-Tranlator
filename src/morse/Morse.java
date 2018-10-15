@@ -5,6 +5,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/*
+
+ */
 public class Morse extends Canvas {
 
     public static final double DEFAULT_AMP = 1.0;
@@ -49,23 +53,21 @@ public class Morse extends Canvas {
     @Override
     public void paint(Graphics graphics) {
 
-        if (signalCursor >= signal.length) {
-            return;
-        }
+        if (signalCursor < signal.length) {
+            final double COEFFICIENT = 2.0;
 
-        final double COEFFICIENT = 2.0;
+            final int WIDTH = getWidth();
+            final int HEIGHT = getHeight();
 
-        final int WIDTH = getWidth();
-        final int HEIGHT = getHeight();
+            graphics.setColor(signalColor);
 
-        graphics.setColor(signalColor);
+            final int MIN_SIZE = WIDTH < HEIGHT ? WIDTH : HEIGHT;
 
-        final int MIN_SIZE = WIDTH < HEIGHT ? WIDTH : HEIGHT;
+            int rayon = (int) (signal[signalCursor] * (MIN_SIZE / COEFFICIENT));
 
-        int rayon = (int) (signal[signalCursor] * (MIN_SIZE / COEFFICIENT));
-
-        for (int r = rayon; r >= 1; r -= COEFFICIENT) {
-            graphics.drawOval(WIDTH / 2 - r, HEIGHT / 2 - r, 2 * r, 2 * r);
+            for (int r = rayon; r >= 1; r -= COEFFICIENT) {
+                graphics.drawOval(WIDTH / 2 - r, HEIGHT / 2 - r, 2 * r, 2 * r);
+            }
         }
     }
 
@@ -73,17 +75,20 @@ public class Morse extends Canvas {
     public void convert() {
 
         signal = null;
-        System.gc();
         translateText = MorseConverter.encodeText(text);
         signal = MorseConverter.buildSignal(translateText, speed, amplitude);
-        System.gc();
+
+        System.gc(); // La construction du signal consomme beaucoup de mémoire temporaire, alors on force un passage du Garbage Collector pour nettoyer la mémoire
+
         fireTranslateEvent(new TranslateEvent(this));
     }
 
     public void play() {
 
         for (signalCursor = 0; signalCursor < signal.length; signalCursor++) {
+
             StdAudio.play(signal[signalCursor]);
+
             repaint();
         }
 
@@ -153,7 +158,7 @@ public class Morse extends Canvas {
     }
 
     public void setSpeed(double speed) {
-        this.speed = (speed >= 1.0 || speed <= 10.0) ? speed : DEFAULT_SPEED;
+        this.speed = (speed >= 1.0 && speed <= 10.0) ? speed : DEFAULT_SPEED;
     }
 
     public String getTranslateText() {
