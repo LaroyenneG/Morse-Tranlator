@@ -9,7 +9,7 @@ import java.util.List;
 /*
 
  */
-public class Morse extends Canvas {
+public class MorseTranslator extends Canvas {
 
     public static final double DEFAULT_AMP = 1.0;
     public static final double DEFAULT_SPEED = 5.0;
@@ -19,7 +19,7 @@ public class Morse extends Canvas {
     public static final int DEFAULT_HEIGHT = 200;
 
     public static final Color DEFAULT_SIGNAL_COLOR = Color.CYAN;
-    private static final Color DEFAULT_BACKGROUND_COLOR = Color.BLACK;
+    public static final Color DEFAULT_BACKGROUND_COLOR = Color.BLACK;
 
     private String text;
     private String translateText;
@@ -36,15 +36,18 @@ public class Morse extends Canvas {
     private List<TranslateListener> listener;
 
 
-    public Morse() {
+    public MorseTranslator() {
 
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setBackground(DEFAULT_BACKGROUND_COLOR);
 
         text = "";
         translateText = "";
+
         signal = new double[0];
+
         listener = new ArrayList<>();
+
         speed = DEFAULT_SPEED;
         amplitude = DEFAULT_AMP;
         signalColor = DEFAULT_SIGNAL_COLOR;
@@ -55,6 +58,7 @@ public class Morse extends Canvas {
     public void paint(Graphics graphics) {
 
         if (signalCursor < signal.length) {
+
             final double COEFFICIENT = 2.0;
 
             final int WIDTH = getWidth();
@@ -111,6 +115,7 @@ public class Morse extends Canvas {
         this.listener.remove(listener);
     }
 
+
     @Override
     public String toString() {
 
@@ -118,7 +123,7 @@ public class Morse extends Canvas {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("morse.Morse");
+        builder.append("morse.MorseTranslator");
         builder.append('\n');
         builder.append("\tText :");
         builder.append(text);

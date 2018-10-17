@@ -1,7 +1,9 @@
 public class AudioThread extends Thread {
 
     /*
-     * Cette classe gère la lecture du signal (audio et graphique). Elle permet de ne pas bloquer les composants javas swing pendant la lecture. Cette classe d'écrit un objet thread qui lance la lecture lorsque le thread est réveillé (en utilisant "playSignal"). 
+     * Cette classe gère la lecture du signal (audio et graphique). Elle permet de ne pas bloquer les composants javas
+     * swing pendant la lecture. Cette classe d'écrit un objet thread qui lance la lecture lorsque le thread est réveillé
+     * (en utilisant "playSignal").
      * Pour bloquer la lecture il suffit de mettre le thread en sommeil (en utilisant "standby").
      */
 
@@ -21,7 +23,7 @@ public class AudioThread extends Thread {
                 standby();
 
                 demo.lockElements();
-                demo.getMorse().play();
+                demo.getMorseTranslator().play();
                 demo.unlockElements();
 
             } catch (InterruptedException e) {

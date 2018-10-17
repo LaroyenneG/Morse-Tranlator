@@ -11,7 +11,7 @@ import java.util.Map;
 
 
 /**
- * Cette classe permet de réaliser les conversions d'un texte simple en code Morse et de créer le signal audio associé.
+ * Cette classe permet de réaliser les conversions d'un texte simple en code MorseTranslator et de créer le signal audio associé.
  */
 
 public abstract class MorseConverter {
@@ -149,7 +149,7 @@ public abstract class MorseConverter {
 
     private static void loadMorseCodeFile() throws IOException, MorseConverterException {
 
-        InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(MorseConverter.class.getPackageName() + "/" + MORSE_FILE_NAME);
+        InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream("morse/assets/" + MORSE_FILE_NAME);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
@@ -165,7 +165,7 @@ public abstract class MorseConverter {
     /* Fonctions utiles */
 
     /*
-     * Transforme un texte Morse en un signal "analogique".
+     * Transforme un texte MorseTranslator en un signal "analogique".
      */
     public static double[] buildSignal(String text, double speed, double amp) {
 
@@ -208,7 +208,7 @@ public abstract class MorseConverter {
 
 
     /*
-     * Traduit un texte simple en code Morse.
+     * Traduit un texte simple en code MorseTranslator.
      */
     public static String encodeText(String text) {
 

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-import morse.Morse;
+import morse.MorseTranslator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +16,7 @@ public class Demo extends javax.swing.JPanel {
 
     private javax.swing.JScrollPane inputScrollPane;
     private javax.swing.JTextArea inputText;
-    private morse.Morse morse;
+    private MorseTranslator morseTranslator;
     private javax.swing.JButton playButton;
     private javax.swing.JSlider speedSlider;
     private javax.swing.JSlider ampSlider;
@@ -51,7 +51,7 @@ public class Demo extends javax.swing.JPanel {
 
 
         java.awt.EventQueue.invokeLater(() -> {
-            JFrame frame = new JFrame("Morse");
+            JFrame frame = new JFrame("Morse Translator");
             frame.add(new Demo());
             frame.setSize(300, 600);
             frame.setResizable(false);
@@ -63,7 +63,7 @@ public class Demo extends javax.swing.JPanel {
 
     private void initComponents() {
 
-        morse = new morse.Morse();
+        morseTranslator = new MorseTranslator();
         translateButton = new javax.swing.JButton();
         playButton = new javax.swing.JButton();
         speedSlider = new javax.swing.JSlider();
@@ -75,8 +75,8 @@ public class Demo extends javax.swing.JPanel {
         ampLabel = new javax.swing.JLabel();
         speedLabel = new javax.swing.JLabel();
 
-        morse.setName("morse");
-        morse.addTranslateListener(this::morseTranslate);
+        morseTranslator.setName("morse");
+        morseTranslator.addTranslateListener(this::morseTranslate);
 
         translateButton.setText("Translate");
         translateButton.addActionListener(this::translateButtonActionPerformed);
@@ -125,7 +125,7 @@ public class Demo extends javax.swing.JPanel {
                                                 .addComponent(translateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addComponent(playButton, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(morse, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(morseTranslator, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(inputScrollPane)
                                         .addComponent(translateScrollPane))
                                 .addContainerGap())
@@ -134,7 +134,7 @@ public class Demo extends javax.swing.JPanel {
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(morse, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(morseTranslator, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                                 .addComponent(translateScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -158,11 +158,11 @@ public class Demo extends javax.swing.JPanel {
             lockElements(); // Durant la phase de traduction on verrouille les entrées de la fenêtre.
             // Les composants seront automatiquement déverrouillés lorsque l'événement sera provoqué
 
-            morse.setText(inputText.getText());
-            morse.setSpeed((double) speedSlider.getMaximum() / speedSlider.getValue());
-            morse.setAmplitude((double) ampSlider.getValue() / ampSlider.getMaximum());
+            morseTranslator.setText(inputText.getText());
+            morseTranslator.setSpeed((double) speedSlider.getMaximum() / speedSlider.getValue());
+            morseTranslator.setAmplitude((double) ampSlider.getValue() / ampSlider.getMaximum());
 
-            morse.convert();
+            morseTranslator.convert();
         });
 
         thread.start();
@@ -181,15 +181,15 @@ public class Demo extends javax.swing.JPanel {
     /* Fonction appelée par l’événement de traduction */
     private void morseTranslate(morse.TranslateEvent evt) {
 
-        Morse morse = (Morse) evt.getSource();
+        MorseTranslator morseTranslator = (MorseTranslator) evt.getSource();
 
-        translateText.setText(morse.getTranslateText()); // On affiche le texte traduit
+        translateText.setText(morseTranslator.getTranslateText()); // On affiche le texte traduit
 
         unlockElements(); // Le traitement est terminé, on rend la main à l'utilisateur
     }
 
-    public Morse getMorse() {
-        return morse;
+    public MorseTranslator getMorseTranslator() {
+        return morseTranslator;
     }
 
     /* Rends les composants de la fenêtre accessible à l'utilisateur */
