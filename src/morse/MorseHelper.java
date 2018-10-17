@@ -11,10 +11,12 @@ import java.util.Map;
 
 
 /**
- * Cette classe permet de réaliser les conversions d'un texte simple en code MorseTranslator et de créer le signal audio associé.
+ * Cette classe permet de réaliser les conversions d'un texte simple en code MorseTranslator et de créer le signal audio
+ * associé.
+ * Elle contient toutes les méthodes de traduction utiles au composant MorseTranslator.
  */
 
-public abstract class MorseConverter {
+public abstract class MorseHelper {
 
 
     private static final double FREQ = 550.0;
@@ -38,7 +40,7 @@ public abstract class MorseConverter {
 
         try {
             loadMorseCodeFile();
-        } catch (IOException | MorseConverterException e) {
+        } catch (IOException | MorseHelperException e) {
             e.printStackTrace();
             System.err.println("Fatal error, can't to load the translation table");
             System.exit(-1);
@@ -58,7 +60,6 @@ public abstract class MorseConverter {
 
         return signal;
     }
-
 
     private static double[] buildValue(char code, double speed, double amp) {
 
@@ -114,7 +115,7 @@ public abstract class MorseConverter {
         return new String(stringCode);
     }
 
-    private static void loadTranslationLine(String line) throws MorseConverterException {
+    private static void loadTranslationLine(String line) throws MorseHelperException {
 
         line = line.trim().toLowerCase();
 
@@ -123,13 +124,13 @@ public abstract class MorseConverter {
 
         for (int i = 0; i < words.length; i++) {
             if (words[i].length() > 1) {
-                throw new MorseConverterException("Invalid format file");
+                throw new MorseHelperException("Invalid format file");
             }
             characters[i] = words[i].charAt(0);
         }
 
         if (characters.length < 2) {
-            throw new MorseConverterException("Invalid format file (line)");
+            throw new MorseHelperException("Invalid format file (line)");
         }
 
 
@@ -137,7 +138,7 @@ public abstract class MorseConverter {
         for (int i = 1; i < characters.length; i++) {
 
             if (characters[i] != LONG_VALUE && characters[i] != SHORT_VALUE) {
-                throw new MorseConverterException("Invalid format file (value)");
+                throw new MorseHelperException("Invalid format file (value)");
             }
 
             code[i - 1] = characters[i];
@@ -147,7 +148,7 @@ public abstract class MorseConverter {
     }
 
 
-    private static void loadMorseCodeFile() throws IOException, MorseConverterException {
+    private static void loadMorseCodeFile() throws IOException, MorseHelperException {
 
         InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream("morse/assets/" + MORSE_FILE_NAME);
 

@@ -80,8 +80,8 @@ public class MorseTranslator extends Canvas {
     public void convert() {
 
         signal = null;
-        translateText = MorseConverter.encodeText(text);
-        signal = MorseConverter.buildSignal(translateText, speed, amplitude);
+        translateText = MorseHelper.encodeText(text);
+        signal = MorseHelper.buildSignal(translateText, speed, amplitude);
 
         System.gc(); // La construction du signal consomme beaucoup de mémoire temporaire, alors on force un passage du Garbage Collector pour nettoyer la mémoire
 
