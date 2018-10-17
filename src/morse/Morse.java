@@ -14,10 +14,11 @@ public class Morse extends Canvas {
     public static final double DEFAULT_AMP = 1.0;
     public static final double DEFAULT_SPEED = 5.0;
 
+
     public static final int DEFAULT_WIDTH = 200;
     public static final int DEFAULT_HEIGHT = 200;
 
-    private static final Color DEFAULT_SIGNAL_COLOR = Color.CYAN;
+    public static final Color DEFAULT_SIGNAL_COLOR = Color.CYAN;
     private static final Color DEFAULT_BACKGROUND_COLOR = Color.BLACK;
 
     private String text;
@@ -150,7 +151,7 @@ public class Morse extends Canvas {
     }
 
     public void setSignalColor(Color color) {
-        signalColor = color;
+        signalColor = (color != null) ? color : DEFAULT_SIGNAL_COLOR;
     }
 
     public double getSpeed() {

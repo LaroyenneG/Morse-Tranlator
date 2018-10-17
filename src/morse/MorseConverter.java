@@ -10,11 +10,16 @@ import java.util.List;
 import java.util.Map;
 
 
-/*
-
+/**
+ * Cette classe permet de réaliser les conversions d'un texte simple en code Morse et de créer le signal audio associé.
  */
 
 public abstract class MorseConverter {
+
+
+    private static final double FREQ = 550.0;
+    private static final double SHORT_DURATION = 0.065;
+    private static final double LONG_DURATION = 0.180;
 
     private static final String MORSE_FILE_NAME = "morse_code.txt";
 
@@ -22,7 +27,6 @@ public abstract class MorseConverter {
     private static final char SHORT_VALUE = '.';
     private static final char SPACE_VALUE = ' ';
     private static final char SPACE_WORD_VALUE = '/';
-
     private static final char UNKNOWN_CHAR = '?';
 
 
@@ -56,52 +60,7 @@ public abstract class MorseConverter {
     }
 
 
-    public static double[] buildSignal(String text, double speed, double amp) {
-
-        if (speed <= 0) {
-            return new double[0];
-        }
-
-        final int textLen = text.length();
-
-        final double[][] signals = new double[textLen][];
-
-        final List<Thread> builderThreads = new LinkedList<>();
-
-        for (int i = 0; i < textLen; i++) {
-
-            signals[i] = buildValue(text.charAt(i), speed, amp);
-        }
-
-        int totalLen = 0;
-        for (double[] segment : signals) {
-            totalLen += segment.length;
-        }
-
-
-        int position = 0;
-
-        double[] signal = new double[totalLen];
-
-
-        for (int i = 0; i < signals.length; i++) {
-
-            System.arraycopy(signals[i], 0, signal, position, signals[i].length);
-
-            position += signals[i].length;
-        }
-
-
-        return signal;
-    }
-
-
     private static double[] buildValue(char code, double speed, double amp) {
-
-
-        final double FREQ = 550.0;
-        final double SHORT_DURATION = 0.065;
-        final double LONG_DURATION = 0.180;
 
         double[] signalValue;
 
@@ -155,40 +114,6 @@ public abstract class MorseConverter {
         return new String(stringCode);
     }
 
-
-    public static String encodeText(String text) {
-
-        text = text.trim().toLowerCase().replace(System.lineSeparator(), " ");
-
-        String[] words = text.split(" ");
-
-        StringBuilder encodeLine = new StringBuilder();
-
-        for (int i = 0; i < words.length; i++) {
-
-            StringBuilder encodeWord = new StringBuilder();
-
-            for (int j = 0; j < words[i].length(); j++) {
-
-                encodeWord.append(encodeChar(words[i].charAt(j)));
-
-                if (j + 1 < words[i].length() || i + 1 < words.length) {
-                    encodeWord.append(SPACE_VALUE);
-                }
-            }
-
-            encodeLine.append(encodeWord);
-
-            if (i + 1 < words.length) {
-                encodeLine.append(SPACE_WORD_VALUE).append(SPACE_VALUE);
-            }
-        }
-
-
-        return new String(encodeLine);
-    }
-
-
     private static void loadTranslationLine(String line) throws MorseConverterException {
 
         line = line.trim().toLowerCase();
@@ -234,5 +159,86 @@ public abstract class MorseConverter {
         }
 
         reader.close();
+    }
+
+
+    /* Fonctions utiles */
+
+    /*
+     * Transforme un texte Morse en un signal "analogique".
+     */
+    public static double[] buildSignal(String text, double speed, double amp) {
+
+        if (speed <= 0) {
+            return new double[0];
+        }
+
+        final int textLen = text.length();
+
+        final double[][] signals = new double[textLen][];
+
+        final List<Thread> builderThreads = new LinkedList<>();
+
+        for (int i = 0; i < textLen; i++) {
+
+            signals[i] = buildValue(text.charAt(i), speed, amp);
+        }
+
+        int totalLen = 0;
+        for (double[] segment : signals) {
+            totalLen += segment.length;
+        }
+
+
+        int position = 0;
+
+        double[] signal = new double[totalLen];
+
+
+        for (int i = 0; i < signals.length; i++) {
+
+            System.arraycopy(signals[i], 0, signal, position, signals[i].length);
+
+            position += signals[i].length;
+        }
+
+
+        return signal;
+    }
+
+
+    /*
+     * Traduit un texte simple en code Morse.
+     */
+    public static String encodeText(String text) {
+
+        text = text.trim().toLowerCase().replace(System.lineSeparator(), " ");
+
+        String[] words = text.split(" ");
+
+        StringBuilder encodeLine = new StringBuilder();
+
+        for (int i = 0; i < words.length; i++) {
+
+            StringBuilder encodeWord = new StringBuilder();
+
+            for (int j = 0; j < words[i].length(); j++) {
+
+                encodeWord.append(encodeChar(words[i].charAt(j)));
+
+                if (j + 1 < words[i].length() || i + 1 < words.length) {
+                    encodeWord.append(SPACE_VALUE);
+                }
+            }
+
+            encodeLine.append(encodeWord);
+
+            if (i + 1 < words.length) {
+                encodeLine.append(SPACE_WORD_VALUE).append(SPACE_VALUE);
+            }
+        }
+
+
+        return new String(encodeLine);
     }
 }
