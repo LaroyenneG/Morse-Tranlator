@@ -16,7 +16,7 @@ import java.util.Map;
  * Elle contient toutes les méthodes de traduction utiles au composant MorseTranslator.
  */
 
-public abstract class MorseHelper {
+public final class MorseHelper {
 
 
     private static final double FREQ = 550.0;
@@ -47,6 +47,10 @@ public abstract class MorseHelper {
         }
     }
 
+
+    private MorseHelper() {
+        // can not instantiate
+    }
 
     private static double[] buildNote(double hz, double duration, double amplitude) {
 
