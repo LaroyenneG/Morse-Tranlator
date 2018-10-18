@@ -81,11 +81,19 @@ public class MorseTranslatorBeanInfo extends SimpleBeanInfo {
         return eventSets;     }//GEN-LAST:Events
 
     // Method identifiers//GEN-FIRST:Methods
+    private static final int METHOD_convert0 = 0;
 
     // Method array 
     /*lazy MethodDescriptor*/
     private static MethodDescriptor[] getMdescriptor(){
-        MethodDescriptor[] methods = new MethodDescriptor[0];//GEN-HEADEREND:Methods
+        MethodDescriptor[] methods = new MethodDescriptor[1];
+    
+        try {
+            methods[METHOD_convert0] = new MethodDescriptor(MorseTranslator.class.getMethod("convert")); // NOI18N
+            methods[METHOD_convert0].setDisplayName ( "Convert" );
+            methods[METHOD_convert0].setShortDescription ( "Convert your text into morse code" );
+        }
+        catch( Exception e) {}//GEN-HEADEREND:Methods
         // Here you can add code for customizing the methods array.
 
         return methods;     }//GEN-LAST:Methods
@@ -94,8 +102,8 @@ public class MorseTranslatorBeanInfo extends SimpleBeanInfo {
     private static java.awt.Image iconColor32 = null;
     private static java.awt.Image iconMono16 = null;
     private static java.awt.Image iconMono32 = null;//GEN-END:IconsDef
-    private static String iconNameC16 = null;//GEN-BEGIN:Icons
-    private static String iconNameC32 = null;
+    private static String iconNameC16 = "/morse/translator/assets/micon_16.png";//GEN-BEGIN:Icons
+    private static String iconNameC32 = "/morse/translator/assets/micon_32.png";
     private static String iconNameM16 = null;
     private static String iconNameM32 = null;//GEN-END:Icons
 

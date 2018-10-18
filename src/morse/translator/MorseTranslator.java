@@ -79,13 +79,23 @@ public class MorseTranslator extends Canvas {
 
     public void convert() {
 
-        signal = null;
-        translateText = MorseHelper.encodeText(text);
-        signal = MorseHelper.buildSignal(translateText, speed, amplitude);
+        Thread thread = new Thread(() -> {
 
-        System.gc(); // La construction du signal consomme beaucoup de mémoire temporaire, alors on force un passage du Garbage Collector pour nettoyer la mémoire
+            signal = null;
+            translateText = MorseHelper.encodeText(text);
+            signal = MorseHelper.buildSignal(translateText, speed, amplitude);
 
-        fireTranslateEvent(new TranslateEvent(this));
+            System.gc(); // La construction du signal consomme beaucoup de mémoire temporaire, alors on force un passage du Garbage Collector pour nettoyer la mémoire
+
+            fireTranslateEvent(new TranslateEvent(this));
+        });
+
+        thread.start();
+
+        /*
+         * Ce thread n'est pas indispensable. Mais il permet de ne pas bloquer les autres composants graphique durant
+         * la phase de construction du signal. Avec cette procédure la fenêtre restera fonctionnelle durant la traduction.
+         */
     }
 
     public void play() {

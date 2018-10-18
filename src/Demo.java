@@ -77,7 +77,7 @@ public class Demo extends javax.swing.JPanel {
         ampLabel = new javax.swing.JLabel();
         speedLabel = new javax.swing.JLabel();
 
-        morseTranslator.setName("morse/translator");
+        morseTranslator.setName("morse");
         morseTranslator.addTranslateListener(this::morseTranslate);
 
         translateButton.setText("Translate");
@@ -159,23 +159,14 @@ public class Demo extends javax.swing.JPanel {
 
     private void translateButtonActionPerformed(java.awt.event.ActionEvent evt) {
 
-        Thread thread = new Thread(() -> {
-            lockElements(); // Durant la phase de traduction on verrouille les entrées de la fenêtre.
-            // Les composants seront automatiquement déverrouillés lorsque l'événement sera provoqué
+        lockElements(); // Durant la phase de traduction on verrouille les entrées de la fenêtre.
+        // Les composants seront automatiquement déverrouillés lorsque l'événement sera provoqué
 
-            morseTranslator.setText(inputText.getText());
-            morseTranslator.setSpeed((double) speedSlider.getMaximum() / speedSlider.getValue());
-            morseTranslator.setAmplitude((double) ampSlider.getValue() / ampSlider.getMaximum());
+        morseTranslator.setText(inputText.getText());
+        morseTranslator.setSpeed((double) speedSlider.getMaximum() / speedSlider.getValue());
+        morseTranslator.setAmplitude((double) ampSlider.getValue() / ampSlider.getMaximum());
 
-            morseTranslator.convert();
-        });
-
-        thread.start();
-
-        /* Ce thread n'est pas indispensable. Mais il permet de ne pas bloquer le bouton durant la phase de construction
-         * du signal. Sans ce thread l'action de déverrouillage des composants provoqués par l'événement de traduction
-         * ne pourrait pas être visible.
-         */
+        morseTranslator.convert();
     }
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {
