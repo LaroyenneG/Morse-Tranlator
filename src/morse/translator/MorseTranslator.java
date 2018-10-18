@@ -1,4 +1,4 @@
-package morse;
+package morse.translator;
 
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -7,7 +7,7 @@ import java.util.List;
 
 
 /*
-
+ * Mon compsant
  */
 public class MorseTranslator extends Canvas {
 
@@ -123,7 +123,7 @@ public class MorseTranslator extends Canvas {
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append("morse.MorseTranslator");
+        builder.append("MorseTranslator");
         builder.append('\n');
         builder.append("\tText :");
         builder.append(text);

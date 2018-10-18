@@ -1,4 +1,4 @@
-package morse;
+package morse.translator;
 
 import java.util.EventListener;
 

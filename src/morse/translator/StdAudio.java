@@ -1,4 +1,4 @@
-package morse;
+package morse.translator;
 /******************************************************************************
  *  Compilation:  javac StdAudio.java
  *  Execution:    java StdAudio
@@ -56,13 +56,13 @@ public final class StdAudio {
     private static byte[] buffer;         // our internal buffer
     private static int bufferSize = 0;    // number of samples currently in internal buffer
 
-    private StdAudio() {
-        // can not instantiate
-    }
-
     // static initializer
     static {
         init();
+    }
+
+    private StdAudio() {
+        // can not instantiate
     }
 
     // open up an audio stream
@@ -282,7 +282,7 @@ public final class StdAudio {
             throw new IllegalArgumentException("could not playSignal '" + filename + "'", e);
         }
 
-        // URL url = morse.StdAudio.class.getResource(filename);
+        // URL url = StdAudio.class.getResource(filename);
         if (url == null) {
             throw new IllegalArgumentException("could not playSignal '" + filename + "'");
         }

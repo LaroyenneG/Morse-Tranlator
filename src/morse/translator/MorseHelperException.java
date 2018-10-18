@@ -1,4 +1,4 @@
-package morse;
+package morse.translator;
 
 public class MorseHelperException extends Exception {
 

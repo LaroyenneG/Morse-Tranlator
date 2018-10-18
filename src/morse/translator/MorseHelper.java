@@ -1,4 +1,4 @@
-package morse;
+package morse.translator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -150,7 +150,7 @@ public abstract class MorseHelper {
 
     private static void loadMorseCodeFile() throws IOException, MorseHelperException {
 
-        InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream("morse/assets/" + MORSE_FILE_NAME);
+        InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream("morse/translator/assets/" + MORSE_FILE_NAME);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 

@@ -4,9 +4,11 @@
  * and open the template in the editor.
  */
 
-import morse.MorseTranslator;
+import morse.translator.MorseTranslator;
+import morse.translator.TranslateEvent;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import java.awt.*;
 
 /**
@@ -75,11 +77,12 @@ public class Demo extends javax.swing.JPanel {
         ampLabel = new javax.swing.JLabel();
         speedLabel = new javax.swing.JLabel();
 
-        morseTranslator.setName("morse");
+        morseTranslator.setName("morse/translator");
         morseTranslator.addTranslateListener(this::morseTranslate);
 
         translateButton.setText("Translate");
         translateButton.addActionListener(this::translateButtonActionPerformed);
+        translateButton.setEnabled(true);
 
         playButton.setText("Play");
         playButton.addActionListener(this::playButtonActionPerformed);
@@ -88,10 +91,12 @@ public class Demo extends javax.swing.JPanel {
         speedSlider.setMaximum(100);
         speedSlider.setMinimum(10);
         speedSlider.setValue(20);
+        speedSlider.addChangeListener(this::speedStateChanged);
 
         ampSlider.setMaximum(100);
         ampSlider.setMinimum(0);
         ampSlider.setValue(50);
+        ampSlider.addChangeListener(this::ampStateChanged);
 
         inputText.setColumns(20);
         inputText.setRows(5);
@@ -177,9 +182,16 @@ public class Demo extends javax.swing.JPanel {
         playerThread.playSignal();
     }
 
+    public void speedStateChanged(ChangeEvent ce) {
+        playButton.setEnabled(false);
+    }
+
+    public void ampStateChanged(ChangeEvent ce) {
+        playButton.setEnabled(false);
+    }
 
     /* Fonction appelée par l’événement de traduction */
-    private void morseTranslate(morse.TranslateEvent evt) {
+    private void morseTranslate(TranslateEvent evt) {
 
         MorseTranslator morseTranslator = (MorseTranslator) evt.getSource();
 
