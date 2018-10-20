@@ -4,11 +4,11 @@
  * and open the template in the editor.
  */
 
+import morse.translator.EndPlayEvent;
 import morse.translator.MorseTranslator;
 import morse.translator.TranslateEvent;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -30,13 +30,9 @@ public class Demo extends javax.swing.JPanel {
     private javax.swing.JLabel speedLabel;
     private javax.swing.JLabel ampLabel;
 
-    private AudioThread playerThread;
-
 
     public Demo() {
         initComponents();
-        playerThread = new AudioThread(this); // Création du thread de lecture audio
-        playerThread.start();
 
         autoLockElements();
     }
@@ -83,8 +79,9 @@ public class Demo extends javax.swing.JPanel {
 
         morseTranslator.setName("morse");
         morseTranslator.addTranslateListener(this::morseTranslatorTranslate);
+        morseTranslator.addEndPlayListener(this::morseTranslatorEndPlay);
 
-        translateButton.setText("Translate");
+        translateButton.setText("TRANSLATE");
         translateButton.addActionListener(this::translateButtonActionPerformed);
 
         playButton.setText("Play");
@@ -182,17 +179,17 @@ public class Demo extends javax.swing.JPanel {
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {
 
-        playerThread.playSignal();
+        morseTranslator.play();
         autoLockElements();
     }
 
-    public void speedStateChanged(ChangeEvent ce) {
+    public void speedStateChanged(javax.swing.event.ChangeEvent ce) {
 
         morseTranslator.setSpeed((double) speedSlider.getMaximum() / speedSlider.getValue());
         autoLockElements();
     }
 
-    public void ampStateChanged(ChangeEvent ce) {
+    public void ampStateChanged(javax.swing.event.ChangeEvent ce) {
 
         morseTranslator.setAmplitude((double) ampSlider.getValue() / ampSlider.getMaximum());
         autoLockElements();
@@ -207,6 +204,11 @@ public class Demo extends javax.swing.JPanel {
         autoLockElements();
     }
 
+    private void morseTranslatorEndPlay(EndPlayEvent evt) {
+
+        autoLockElements();
+    }
+
     public MorseTranslator getMorseTranslator() {
         return morseTranslator;
     }
@@ -218,7 +220,7 @@ public class Demo extends javax.swing.JPanel {
 
         switch (morseTranslator.getState()) {
 
-            case Waiting:
+            case WAITING:
                 speedSlider.setEnabled(false);
                 ampSlider.setEnabled(false);
                 translateText.setEnabled(false);
@@ -227,7 +229,7 @@ public class Demo extends javax.swing.JPanel {
                 translateButton.setEnabled(false);
                 break;
 
-            case Reading:
+            case PLAYING:
                 speedSlider.setEnabled(false);
                 ampSlider.setEnabled(false);
                 translateText.setEnabled(false);
@@ -236,7 +238,7 @@ public class Demo extends javax.swing.JPanel {
                 translateButton.setEnabled(false);
                 break;
 
-            case ReadyToTranslate:
+            case READY_TO_TRANSLATE:
                 speedSlider.setEnabled(true);
                 ampSlider.setEnabled(true);
                 translateText.setEnabled(false);
@@ -245,7 +247,7 @@ public class Demo extends javax.swing.JPanel {
                 translateButton.setEnabled(true);
                 break;
 
-            case Translated:
+            case TRANSLATED:
                 speedSlider.setEnabled(true);
                 ampSlider.setEnabled(true);
                 translateText.setEnabled(true);
@@ -254,7 +256,7 @@ public class Demo extends javax.swing.JPanel {
                 translateButton.setEnabled(false);
                 break;
 
-            case Translate:
+            case TRANSLATE:
                 speedSlider.setEnabled(false);
                 ampSlider.setEnabled(false);
                 translateText.setEnabled(false);

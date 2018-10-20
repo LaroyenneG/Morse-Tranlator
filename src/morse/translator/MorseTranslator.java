@@ -13,13 +13,7 @@ import java.util.List;
 
 public class MorseTranslator extends Canvas {
 
-    public enum State {
-        Waiting,
-        ReadyToTranslate,
-        Translated,
-        Reading,
-        Translate
-    }
+    private List<TranslateListener> translateListeners;
 
     public static final double DEFAULT_AMP = 1.0;
     public static final double DEFAULT_SPEED = 5.0;
@@ -42,11 +36,7 @@ public class MorseTranslator extends Canvas {
     private double amplitude;
 
     private Color signalColor;
-
-    private List<TranslateListener> listener;
-
-    private State state;
-
+    private List<EndPlayListener> endPlayListeners;
     public MorseTranslator() {
 
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -57,12 +47,39 @@ public class MorseTranslator extends Canvas {
 
         signal = new double[0];
 
-        listener = new ArrayList<>();
+        translateListeners = new ArrayList<>();
+        endPlayListeners = new ArrayList<>();
 
         speed = DEFAULT_SPEED;
         amplitude = DEFAULT_AMP;
         signalColor = DEFAULT_SIGNAL_COLOR;
-        state = State.Waiting;
+        state = State.WAITING;
+    }
+
+    private State state;
+
+    public void convert() {
+
+        state = State.TRANSLATE;
+
+        Thread thread = new Thread(() -> {
+
+            signal = null;
+            translateText = MorseHelper.encodeText(text);
+            signal = MorseHelper.buildSignal(translateText, speed, amplitude);
+
+            System.gc(); // La construction du signal consomme beaucoup de mémoire temporaire, alors on force un passage du Garbage Collector pour nettoyer la mémoire
+
+            state = State.TRANSLATED;
+            fireTranslateEvent(new TranslateEvent(this));
+        });
+
+        thread.start();
+
+        /*
+         * Ce thread n'est pas indispensable. Mais il permet de ne pas bloquer les autres composants graphique durant
+         * la phase de construction du signal. Avec cette procédure la fenêtre restera fonctionnelle durant la traduction.
+         */
     }
 
 
@@ -88,62 +105,63 @@ public class MorseTranslator extends Canvas {
         }
     }
 
+    public void play() {
 
-    public void convert() {
-
-        state = State.Translate;
+        state = State.PLAYING;
 
         Thread thread = new Thread(() -> {
 
-            signal = null;
-            translateText = MorseHelper.encodeText(text);
-            signal = MorseHelper.buildSignal(translateText, speed, amplitude);
+            for (signalCursor = 0; signalCursor < signal.length; signalCursor++) {
 
-            System.gc(); // La construction du signal consomme beaucoup de mémoire temporaire, alors on force un passage du Garbage Collector pour nettoyer la mémoire
+                StdAudio.play(signal[signalCursor]);
 
-            state = State.Translated;
-            fireTranslateEvent(new TranslateEvent(this));
+                repaint();
+            }
+
+            signalCursor = 0;
+
+            state = State.TRANSLATED;
+
+            fireEndPlayEvent(new EndPlayEvent(this));
         });
 
         thread.start();
-
-        /*
-         * Ce thread n'est pas indispensable. Mais il permet de ne pas bloquer les autres composants graphique durant
-         * la phase de construction du signal. Avec cette procédure la fenêtre restera fonctionnelle durant la traduction.
-         */
-    }
-
-    public void play() {
-
-        state = State.Reading;
-
-
-
-        for (signalCursor = 0; signalCursor < signal.length; signalCursor++) {
-
-            StdAudio.play(signal[signalCursor]);
-
-            repaint();
-        }
-
-        signalCursor = 0;
     }
 
     private void fireTranslateEvent(TranslateEvent event) {
 
-        for (TranslateListener listener : listener) {
+        for (TranslateListener listener : translateListeners) {
             listener.translate(event);
         }
     }
 
+    private void fireEndPlayEvent(EndPlayEvent event) {
+
+        for (EndPlayListener listener : endPlayListeners) {
+            listener.endPlay(event);
+        }
+    }
+
     public void addTranslateListener(TranslateListener listener) {
-        this.listener.add(listener);
+        this.translateListeners.add(listener);
     }
 
     public void removeTranslateListener(TranslateListener listener) {
-        this.listener.remove(listener);
+        this.translateListeners.remove(listener);
     }
 
+    public void addEndPlayListener(EndPlayListener listener) {
+        this.endPlayListeners.add(listener);
+    }
+
+    public void removeEndPlayListener(EndPlayListener listener) {
+        this.endPlayListeners.remove(listener);
+    }
+
+    public void setText(String text) {
+        this.text = text;
+        state = State.READY_TO_TRANSLATE;
+    }
 
     @Override
     public String toString() {
@@ -176,9 +194,9 @@ public class MorseTranslator extends Canvas {
         return text;
     }
 
-    public void setText(String text) {
-        this.text = text;
-        state = State.ReadyToTranslate;
+    public void setSpeed(double speed) {
+        this.speed = (speed >= 1.0 && speed <= 10.0) ? speed : DEFAULT_SPEED;
+        state = State.READY_TO_TRANSLATE;
     }
 
     public Color getSignalColor() {
@@ -193,9 +211,9 @@ public class MorseTranslator extends Canvas {
         return speed;
     }
 
-    public void setSpeed(double speed) {
-        this.speed = (speed >= 1.0 && speed <= 10.0) ? speed : DEFAULT_SPEED;
-        state = State.ReadyToTranslate;
+    public void setAmplitude(double amp) {
+        this.amplitude = (amp >= 0.0 && amp <= 1.0) ? amp : DEFAULT_AMP;
+        state = State.READY_TO_TRANSLATE;
     }
 
     public String getTranslateText() {
@@ -206,9 +224,12 @@ public class MorseTranslator extends Canvas {
         return amplitude;
     }
 
-    public void setAmplitude(double amp) {
-        this.amplitude = (amp >= 0.0 && amp <= 1.0) ? amp : DEFAULT_AMP;
-        state = State.ReadyToTranslate;
+    public enum State {
+        WAITING,
+        READY_TO_TRANSLATE,
+        TRANSLATED,
+        PLAYING,
+        TRANSLATE
     }
 
     public State getState() {
