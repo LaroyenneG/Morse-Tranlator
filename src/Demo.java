@@ -232,8 +232,6 @@ public class Demo extends javax.swing.JPanel {
     /* Fonction appelée par l’événement de traduction */
     private void morseTranslatorTranslate(TranslateEvent evt) {
 
-        MorseTranslator morseTranslator = (MorseTranslator) evt.getSource();
-
         translateText.setText(morseTranslator.getTranslateText()); // On affiche le texte traduit
         autoLockElements();
     }
