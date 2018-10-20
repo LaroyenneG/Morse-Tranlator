@@ -4,12 +4,14 @@
  * and open the template in the editor.
  */
 
-import morse.translator.EndPlayEvent;
-import morse.translator.MorseTranslator;
-import morse.translator.TranslateEvent;
+import morse.translator.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -51,13 +53,16 @@ public class Demo extends javax.swing.JPanel {
         }
 
 
-        java.awt.EventQueue.invokeLater(() -> {
-            JFrame frame = new JFrame("Morse Translator");
-            frame.add(new Demo());
-            frame.setSize(300, 600);
-            frame.setResizable(false);
-            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            frame.setVisible(true);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JFrame frame = new JFrame("Morse Translator");
+                frame.add(new Demo());
+                frame.setSize(300, 600);
+                frame.setResizable(false);
+                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                frame.setVisible(true);
+            }
         });
     }
 
@@ -76,25 +81,55 @@ public class Demo extends javax.swing.JPanel {
         ampLabel = new javax.swing.JLabel();
         speedLabel = new javax.swing.JLabel();
 
-        morseTranslator.setName("morse");
-        morseTranslator.addTranslateListener(this::morseTranslatorTranslate);
-        morseTranslator.addEndPlayListener(this::morseTranslatorEndPlay);
+        morseTranslator.setName("Morse");
+        morseTranslator.addTranslateListener(new TranslateListener() {
+            @Override
+            public void translate(TranslateEvent event) {
+                morseTranslatorTranslate(event);
+            }
+        });
+        morseTranslator.addEndPlayListener(new EndPlayListener() {
+            @Override
+            public void endPlay(EndPlayEvent event) {
+                morseTranslatorEndPlay(event);
+            }
+        });
 
-        translateButton.setText("TRANSLATING");
-        translateButton.addActionListener(this::translateButtonActionPerformed);
+        translateButton.setText("Translate");
+        translateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                translateButtonActionPerformed(event);
+            }
+        });
 
         playButton.setText("Play");
-        playButton.addActionListener(this::playButtonActionPerformed);
+        playButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                playButtonActionPerformed(event);
+            }
+        });
 
         speedSlider.setMaximum(100);
         speedSlider.setMinimum(10);
         speedSlider.setValue(20);
-        speedSlider.addChangeListener(this::speedStateChanged);
+        speedSlider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent event) {
+                speedStateChanged(event);
+            }
+        });
 
         ampSlider.setMaximum(100);
         ampSlider.setMinimum(0);
         ampSlider.setValue(50);
-        ampSlider.addChangeListener(this::ampStateChanged);
+        ampSlider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent event) {
+                ampStateChanged(event);
+            }
+        });
 
         inputText.setColumns(20);
         inputText.setRows(5);
@@ -102,7 +137,7 @@ public class Demo extends javax.swing.JPanel {
         inputText.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-              inputTextKeyPressed(e);
+                inputTextKeyPressed(e);
             }
         });
 
@@ -113,7 +148,7 @@ public class Demo extends javax.swing.JPanel {
         translateText.setFont(new Font("SansSerif", Font.BOLD, 15));
         translateScrollPane.setViewportView(translateText);
 
-        speedLabel.setText("Vitesse :");
+        speedLabel.setText("Speed :");
         speedLabel.setFont(new Font("Arial", Font.ITALIC, 10));
 
         ampLabel.setText("Amplitude :");
@@ -164,7 +199,7 @@ public class Demo extends javax.swing.JPanel {
 
     private void inputTextKeyPressed(java.awt.event.KeyEvent evt) {
 
-        if(!morseTranslator.getTranslateText().equals(inputText.getText())) {
+        if (!morseTranslator.getTranslateText().equals(inputText.getText())) {
             morseTranslator.setText(inputText.getText());
             autoLockElements();
         }
@@ -182,13 +217,13 @@ public class Demo extends javax.swing.JPanel {
         autoLockElements();
     }
 
-    public void speedStateChanged(javax.swing.event.ChangeEvent ce) {
+    private void speedStateChanged(javax.swing.event.ChangeEvent ce) {
 
         morseTranslator.setSpeed((double) speedSlider.getMaximum() / speedSlider.getValue());
         autoLockElements();
     }
 
-    public void ampStateChanged(javax.swing.event.ChangeEvent ce) {
+    private void ampStateChanged(javax.swing.event.ChangeEvent ce) {
 
         morseTranslator.setAmplitude((double) ampSlider.getValue() / ampSlider.getMaximum());
         autoLockElements();
@@ -213,9 +248,8 @@ public class Demo extends javax.swing.JPanel {
     }
 
 
-    /* Rends les composants de la fenêtre accessible à l'utilisateur en fonction du status du MorseTranslator */
-    public void autoLockElements() {
-
+    /* Rend les composants de la fenêtre accessible à l'utilisateur en fonction du status du MorseTranslator */
+    private void autoLockElements() {
 
         switch (morseTranslator.getState()) {
 
@@ -262,6 +296,11 @@ public class Demo extends javax.swing.JPanel {
                 inputText.setEnabled(false);
                 playButton.setEnabled(false);
                 translateButton.setEnabled(false);
+                break;
+
+            default:
+                System.err.println("development error");
+                System.exit(-1);
                 break;
         }
     }
