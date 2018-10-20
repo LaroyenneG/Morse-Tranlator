@@ -9,16 +9,16 @@ import java.beans.*;
 
 /**
  *
- * @author guillaume
+ * @author Guillaume LAROYENE
  */
 public class MorseTranslatorBeanInfo extends SimpleBeanInfo {
 
     // Bean descriptor//GEN-FIRST:BeanDescriptor
     /*lazy BeanDescriptor*/
     private static BeanDescriptor getBdescriptor(){
-        BeanDescriptor beanDescriptor = new BeanDescriptor  ( MorseTranslator.class , null ); // NOI18N
+        BeanDescriptor beanDescriptor = new BeanDescriptor  ( morse.translator.MorseTranslator.class , null ); // NOI18N
         beanDescriptor.setDisplayName ( "Morse translator" );
-        beanDescriptor.setShortDescription ( "This component allows you to translate texts into morse code " );//GEN-HEADEREND:BeanDescriptor
+        beanDescriptor.setShortDescription ( "This component allows you to translate texts to morse code " );//GEN-HEADEREND:BeanDescriptor
         // Here you can add code for customizing the BeanDescriptor.
 
         return beanDescriptor;     }//GEN-LAST:BeanDescriptor
@@ -37,21 +37,21 @@ public class MorseTranslatorBeanInfo extends SimpleBeanInfo {
         PropertyDescriptor[] properties = new PropertyDescriptor[5];
     
         try {
-            properties[PROPERTY_amplitude] = new PropertyDescriptor ( "amplitude", MorseTranslator.class, "getAmplitude", "setAmplitude" ); // NOI18N
+            properties[PROPERTY_amplitude] = new PropertyDescriptor ( "amplitude", morse.translator.MorseTranslator.class, "getAmplitude", "setAmplitude" ); // NOI18N
             properties[PROPERTY_amplitude].setDisplayName ( "Amplitude" );
             properties[PROPERTY_amplitude].setShortDescription ( "Signal amplitude value" );
-            properties[PROPERTY_signalColor] = new PropertyDescriptor ( "signalColor", MorseTranslator.class, "getSignalColor", "setSignalColor" ); // NOI18N
+            properties[PROPERTY_signalColor] = new PropertyDescriptor ( "signalColor", morse.translator.MorseTranslator.class, "getSignalColor", "setSignalColor" ); // NOI18N
             properties[PROPERTY_signalColor].setDisplayName ( "Signal color" );
             properties[PROPERTY_signalColor].setShortDescription ( "Signal color" );
-            properties[PROPERTY_speed] = new PropertyDescriptor ( "speed", MorseTranslator.class, "getSpeed", "setSpeed" ); // NOI18N
+            properties[PROPERTY_speed] = new PropertyDescriptor ( "speed", morse.translator.MorseTranslator.class, "getSpeed", "setSpeed" ); // NOI18N
             properties[PROPERTY_speed].setDisplayName ( "Speed" );
             properties[PROPERTY_speed].setShortDescription ( "Signal amplitude value" );
-            properties[PROPERTY_text] = new PropertyDescriptor ( "text", MorseTranslator.class, null, "setText" ); // NOI18N
+            properties[PROPERTY_text] = new PropertyDescriptor ( "text", morse.translator.MorseTranslator.class, null, "setText" ); // NOI18N
             properties[PROPERTY_text].setDisplayName ( "Text" );
-            properties[PROPERTY_text].setShortDescription ( "Text translate into morse code" );
-            properties[PROPERTY_translateText] = new PropertyDescriptor ( "translateText", MorseTranslator.class, "getTranslateText", null ); // NOI18N
+            properties[PROPERTY_text].setShortDescription ( "Text to translate" );
+            properties[PROPERTY_translateText] = new PropertyDescriptor ( "translateText", morse.translator.MorseTranslator.class, "getTranslateText", null ); // NOI18N
             properties[PROPERTY_translateText].setDisplayName ( "Text translate" );
-            properties[PROPERTY_translateText].setShortDescription ( "" );
+            properties[PROPERTY_translateText].setShortDescription ( "Text translate to morse code" );
         }
         catch(IntrospectionException e) {
             e.printStackTrace();
@@ -61,15 +61,19 @@ public class MorseTranslatorBeanInfo extends SimpleBeanInfo {
         return properties;     }//GEN-LAST:Properties
 
     // EventSet identifiers//GEN-FIRST:Events
-    private static final int EVENT_translateListener = 0;
+    private static final int EVENT_endPlayListener = 0;
+    private static final int EVENT_translateListener = 1;
 
     // EventSet array
     /*lazy EventSetDescriptor*/
     private static EventSetDescriptor[] getEdescriptor(){
-        EventSetDescriptor[] eventSets = new EventSetDescriptor[1];
+        EventSetDescriptor[] eventSets = new EventSetDescriptor[2];
     
         try {
-            eventSets[EVENT_translateListener] = new EventSetDescriptor ( MorseTranslator.class, "translateListener", TranslateListener.class, new String[] {"translate"}, "addTranslateListener", "removeTranslateListener" ); // NOI18N
+            eventSets[EVENT_endPlayListener] = new EventSetDescriptor ( morse.translator.MorseTranslator.class, "endPlayListener", morse.translator.EndPlayListener.class, new String[] {"endPlay"}, "addEndPlayListener", "removeEndPlayListener" ); // NOI18N
+            eventSets[EVENT_endPlayListener].setDisplayName ( "End Play Event" );
+            eventSets[EVENT_endPlayListener].setShortDescription ( "Genarate an enven when the signal reading is complete" );
+            eventSets[EVENT_translateListener] = new EventSetDescriptor ( morse.translator.MorseTranslator.class, "translateListener", morse.translator.TranslateListener.class, new String[] {"translate"}, "addTranslateListener", "removeTranslateListener" ); // NOI18N
             eventSets[EVENT_translateListener].setDisplayName ( "Translate Event" );
             eventSets[EVENT_translateListener].setShortDescription ( "Cause an event when the text is translated" );
         }
@@ -82,16 +86,20 @@ public class MorseTranslatorBeanInfo extends SimpleBeanInfo {
 
     // Method identifiers//GEN-FIRST:Methods
     private static final int METHOD_convert0 = 0;
+    private static final int METHOD_play1 = 1;
 
     // Method array 
     /*lazy MethodDescriptor*/
     private static MethodDescriptor[] getMdescriptor(){
-        MethodDescriptor[] methods = new MethodDescriptor[1];
+        MethodDescriptor[] methods = new MethodDescriptor[2];
     
         try {
-            methods[METHOD_convert0] = new MethodDescriptor(MorseTranslator.class.getMethod("convert")); // NOI18N
-            methods[METHOD_convert0].setDisplayName ( "Convert" );
-            methods[METHOD_convert0].setShortDescription ( "Convert your text into morse code" );
+            methods[METHOD_convert0] = new MethodDescriptor(morse.translator.MorseTranslator.class.getMethod("convert")); // NOI18N
+            methods[METHOD_convert0].setDisplayName ( "Translate" );
+            methods[METHOD_convert0].setShortDescription ( "Translate your text to morse code" );
+            methods[METHOD_play1] = new MethodDescriptor(morse.translator.MorseTranslator.class.getMethod("play")); // NOI18N
+            methods[METHOD_play1].setDisplayName ( "Play" );
+            methods[METHOD_play1].setShortDescription ( "Play the morse signal" );
         }
         catch( Exception e) {}//GEN-HEADEREND:Methods
         // Here you can add code for customizing the methods array.
