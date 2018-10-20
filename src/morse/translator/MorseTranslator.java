@@ -13,14 +13,14 @@ import java.util.List;
 
 public class MorseTranslator extends Canvas {
 
-    public static final double DEFAULT_AMP = 1.0;
-    public static final double DEFAULT_SPEED = 5.0;
+    private static final double DEFAULT_AMP = 1.0;
+    private static final double DEFAULT_SPEED = 5.0;
 
-    public static final int DEFAULT_WIDTH = 200;
-    public static final int DEFAULT_HEIGHT = 200;
+    private static final int DEFAULT_WIDTH = 200;
+    private static final int DEFAULT_HEIGHT = 200;
 
-    public static final Color DEFAULT_SIGNAL_COLOR = Color.CYAN;
-    public static final Color DEFAULT_BACKGROUND_COLOR = Color.BLACK;
+    private static final Color DEFAULT_SIGNAL_COLOR = Color.CYAN;
+    private static final Color DEFAULT_BACKGROUND_COLOR = Color.BLACK;
 
     private String text;
     private String translateText;
@@ -60,18 +60,20 @@ public class MorseTranslator extends Canvas {
 
     public void convert() {
 
-        state = State.TRANSLATE;
+        state = State.TRANSLATING;
 
-        Thread thread = new Thread(() -> {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                signal = null;
+                translateText = MorseHelper.encodeText(text);
+                signal = MorseHelper.buildSignal(translateText, speed, amplitude);
 
-            signal = null;
-            translateText = MorseHelper.encodeText(text);
-            signal = MorseHelper.buildSignal(translateText, speed, amplitude);
+                System.gc(); // La construction du signal consomme beaucoup de mémoire temporaire, alors on force un passage du Garbage Collector pour nettoyer la mémoire
 
-            System.gc(); // La construction du signal consomme beaucoup de mémoire temporaire, alors on force un passage du Garbage Collector pour nettoyer la mémoire
-
-            state = State.TRANSLATED;
-            fireTranslateEvent(new TranslateEvent(this));
+                state = State.TRANSLATED;
+                fireTranslateEvent(new TranslateEvent(this));
+            }
         });
 
         thread.start();
@@ -109,20 +111,23 @@ public class MorseTranslator extends Canvas {
 
         state = State.PLAYING;
 
-        Thread thread = new Thread(() -> {
+        Thread thread = new Thread(new Runnable() {
 
-            for (signalCursor = 0; signalCursor < signal.length; signalCursor++) {
+            @Override
+            public void run() {
+                for (signalCursor = 0; signalCursor < signal.length; signalCursor++) {
 
-                StdAudio.play(signal[signalCursor]);
+                    StdAudio.play(signal[signalCursor]);
 
-                repaint();
+                    repaint();
+                }
+
+                signalCursor = 0;
+
+                state = State.TRANSLATED;
+
+                fireEndPlayEvent(new EndPlayEvent(this));
             }
-
-            signalCursor = 0;
-
-            state = State.TRANSLATED;
-
-            fireEndPlayEvent(new EndPlayEvent(this));
         });
 
         thread.start();
@@ -185,7 +190,6 @@ public class MorseTranslator extends Canvas {
     /*
      * Getters and Setters zone
      */
-
     public void setText(String text) {
         this.text = text;
         state = State.READY_TO_TRANSLATE;

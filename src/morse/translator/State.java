@@ -5,5 +5,5 @@ public enum State {
     READY_TO_TRANSLATE,
     TRANSLATED,
     PLAYING,
-    TRANSLATE
+    TRANSLATING
 }

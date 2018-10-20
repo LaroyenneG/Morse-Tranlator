@@ -80,7 +80,7 @@ public class Demo extends javax.swing.JPanel {
         morseTranslator.addTranslateListener(this::morseTranslatorTranslate);
         morseTranslator.addEndPlayListener(this::morseTranslatorEndPlay);
 
-        translateButton.setText("TRANSLATE");
+        translateButton.setText("TRANSLATING");
         translateButton.addActionListener(this::translateButtonActionPerformed);
 
         playButton.setText("Play");
@@ -255,7 +255,7 @@ public class Demo extends javax.swing.JPanel {
                 translateButton.setEnabled(false);
                 break;
 
-            case TRANSLATE:
+            case TRANSLATING:
                 speedSlider.setEnabled(false);
                 ampSlider.setEnabled(false);
                 translateText.setEnabled(false);
