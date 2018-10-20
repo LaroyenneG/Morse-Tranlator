@@ -10,6 +10,8 @@ import morse.translator.TranslateEvent;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  * @author Guillaume Laroyenne
@@ -35,6 +37,8 @@ public class Demo extends javax.swing.JPanel {
         initComponents();
         playerThread = new AudioThread(this); // Création du thread de lecture audio
         playerThread.start();
+
+        autoLockElements();
     }
 
 
@@ -78,15 +82,13 @@ public class Demo extends javax.swing.JPanel {
         speedLabel = new javax.swing.JLabel();
 
         morseTranslator.setName("morse");
-        morseTranslator.addTranslateListener(this::morseTranslate);
+        morseTranslator.addTranslateListener(this::morseTranslatorTranslate);
 
         translateButton.setText("Translate");
         translateButton.addActionListener(this::translateButtonActionPerformed);
-        translateButton.setEnabled(true);
 
         playButton.setText("Play");
         playButton.addActionListener(this::playButtonActionPerformed);
-        playButton.setEnabled(false);
 
         speedSlider.setMaximum(100);
         speedSlider.setMinimum(10);
@@ -101,6 +103,13 @@ public class Demo extends javax.swing.JPanel {
         inputText.setColumns(20);
         inputText.setRows(5);
         inputScrollPane.setViewportView(inputText);
+        inputText.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+              inputTextKeyPressed(e);
+            }
+        });
+
 
         translateText.setColumns(20);
         translateText.setRows(5);
@@ -157,61 +166,102 @@ public class Demo extends javax.swing.JPanel {
         );
     }
 
+    private void inputTextKeyPressed(java.awt.event.KeyEvent evt) {
+
+        if(!morseTranslator.getTranslateText().equals(inputText.getText())) {
+            morseTranslator.setText(inputText.getText());
+            autoLockElements();
+        }
+    }
+
     private void translateButtonActionPerformed(java.awt.event.ActionEvent evt) {
 
-        lockElements(); // Durant la phase de traduction on verrouille les entrées de la fenêtre.
-        // Les composants seront automatiquement déverrouillés lorsque l'événement sera provoqué
-
-        morseTranslator.setText(inputText.getText());
-        morseTranslator.setSpeed((double) speedSlider.getMaximum() / speedSlider.getValue());
-        morseTranslator.setAmplitude((double) ampSlider.getValue() / ampSlider.getMaximum());
-
         morseTranslator.convert();
+        autoLockElements();
     }
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {
+
         playerThread.playSignal();
+        autoLockElements();
     }
 
     public void speedStateChanged(ChangeEvent ce) {
-        playButton.setEnabled(false);
+
+        morseTranslator.setSpeed((double) speedSlider.getMaximum() / speedSlider.getValue());
+        autoLockElements();
     }
 
     public void ampStateChanged(ChangeEvent ce) {
-        playButton.setEnabled(false);
+
+        morseTranslator.setAmplitude((double) ampSlider.getValue() / ampSlider.getMaximum());
+        autoLockElements();
     }
 
     /* Fonction appelée par l’événement de traduction */
-    private void morseTranslate(TranslateEvent evt) {
+    private void morseTranslatorTranslate(TranslateEvent evt) {
 
         MorseTranslator morseTranslator = (MorseTranslator) evt.getSource();
 
         translateText.setText(morseTranslator.getTranslateText()); // On affiche le texte traduit
-
-        unlockElements(); // Le traitement est terminé, on rend la main à l'utilisateur
+        autoLockElements();
     }
 
     public MorseTranslator getMorseTranslator() {
         return morseTranslator;
     }
 
-    /* Rends les composants de la fenêtre accessible à l'utilisateur */
-    public void lockElements() {
-        playButton.setEnabled(false);
-        translateButton.setEnabled(false);
-        translateText.setEnabled(false);
-        inputText.setEnabled(false);
-        speedSlider.setEnabled(false);
-        ampSlider.setEnabled(false);
-    }
 
-    /* Verrouille les composants de la fenêtre à l'utilisateur */
-    public void unlockElements() {
-        playButton.setEnabled(true);
-        translateButton.setEnabled(true);
-        translateText.setEnabled(true);
-        inputText.setEnabled(true);
-        speedSlider.setEnabled(true);
-        ampSlider.setEnabled(true);
+    /* Rends les composants de la fenêtre accessible à l'utilisateur en fonction du status du MorseTranslator */
+    public void autoLockElements() {
+
+
+        switch (morseTranslator.getState()) {
+
+            case Waiting:
+                speedSlider.setEnabled(false);
+                ampSlider.setEnabled(false);
+                translateText.setEnabled(false);
+                inputText.setEnabled(true);
+                playButton.setEnabled(false);
+                translateButton.setEnabled(false);
+                break;
+
+            case Reading:
+                speedSlider.setEnabled(false);
+                ampSlider.setEnabled(false);
+                translateText.setEnabled(false);
+                inputText.setEnabled(false);
+                playButton.setEnabled(false);
+                translateButton.setEnabled(false);
+                break;
+
+            case ReadyToTranslate:
+                speedSlider.setEnabled(true);
+                ampSlider.setEnabled(true);
+                translateText.setEnabled(false);
+                inputText.setEnabled(true);
+                playButton.setEnabled(false);
+                translateButton.setEnabled(true);
+                break;
+
+            case Translated:
+                speedSlider.setEnabled(true);
+                ampSlider.setEnabled(true);
+                translateText.setEnabled(true);
+                inputText.setEnabled(true);
+                playButton.setEnabled(true);
+                translateButton.setEnabled(false);
+                break;
+
+            case Translate:
+                speedSlider.setEnabled(false);
+                ampSlider.setEnabled(false);
+                translateText.setEnabled(false);
+                inputText.setEnabled(false);
+                playButton.setEnabled(false);
+                translateButton.setEnabled(false);
+                break;
+        }
     }
 }

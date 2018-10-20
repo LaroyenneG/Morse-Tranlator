@@ -21,10 +21,7 @@ public class AudioThread extends Thread {
             try {
 
                 standby();
-
-                demo.lockElements();
                 demo.getMorseTranslator().play();
-                demo.unlockElements();
 
             } catch (InterruptedException e) {
                 e.printStackTrace();

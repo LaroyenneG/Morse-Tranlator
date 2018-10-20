@@ -6,10 +6,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/*
- * Mon compsant
+/**
+ * Mon composant
  */
+
+
 public class MorseTranslator extends Canvas {
+
+    public enum State {
+        Waiting,
+        ReadyToTranslate,
+        Translated,
+        Reading,
+        Translate
+    }
 
     public static final double DEFAULT_AMP = 1.0;
     public static final double DEFAULT_SPEED = 5.0;
@@ -35,6 +45,7 @@ public class MorseTranslator extends Canvas {
 
     private List<TranslateListener> listener;
 
+    private State state;
 
     public MorseTranslator() {
 
@@ -51,6 +62,7 @@ public class MorseTranslator extends Canvas {
         speed = DEFAULT_SPEED;
         amplitude = DEFAULT_AMP;
         signalColor = DEFAULT_SIGNAL_COLOR;
+        state = State.Waiting;
     }
 
 
@@ -79,6 +91,8 @@ public class MorseTranslator extends Canvas {
 
     public void convert() {
 
+        state = State.Translate;
+
         Thread thread = new Thread(() -> {
 
             signal = null;
@@ -87,6 +101,7 @@ public class MorseTranslator extends Canvas {
 
             System.gc(); // La construction du signal consomme beaucoup de mémoire temporaire, alors on force un passage du Garbage Collector pour nettoyer la mémoire
 
+            state = State.Translated;
             fireTranslateEvent(new TranslateEvent(this));
         });
 
@@ -99,6 +114,10 @@ public class MorseTranslator extends Canvas {
     }
 
     public void play() {
+
+        state = State.Reading;
+
+
 
         for (signalCursor = 0; signalCursor < signal.length; signalCursor++) {
 
@@ -117,8 +136,8 @@ public class MorseTranslator extends Canvas {
         }
     }
 
-    public void addTranslateListener(TranslateListener event) {
-        listener.add(event);
+    public void addTranslateListener(TranslateListener listener) {
+        this.listener.add(listener);
     }
 
     public void removeTranslateListener(TranslateListener listener) {
@@ -159,6 +178,7 @@ public class MorseTranslator extends Canvas {
 
     public void setText(String text) {
         this.text = text;
+        state = State.ReadyToTranslate;
     }
 
     public Color getSignalColor() {
@@ -175,6 +195,7 @@ public class MorseTranslator extends Canvas {
 
     public void setSpeed(double speed) {
         this.speed = (speed >= 1.0 && speed <= 10.0) ? speed : DEFAULT_SPEED;
+        state = State.ReadyToTranslate;
     }
 
     public String getTranslateText() {
@@ -187,5 +208,10 @@ public class MorseTranslator extends Canvas {
 
     public void setAmplitude(double amp) {
         this.amplitude = (amp >= 0.0 && amp <= 1.0) ? amp : DEFAULT_AMP;
+        state = State.ReadyToTranslate;
+    }
+
+    public State getState() {
+        return state;
     }
 }
