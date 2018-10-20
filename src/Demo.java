@@ -33,7 +33,6 @@ public class Demo extends javax.swing.JPanel {
 
     public Demo() {
         initComponents();
-
         autoLockElements();
     }
 

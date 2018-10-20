@@ -13,11 +13,8 @@ import java.util.List;
 
 public class MorseTranslator extends Canvas {
 
-    private List<TranslateListener> translateListeners;
-
     public static final double DEFAULT_AMP = 1.0;
     public static final double DEFAULT_SPEED = 5.0;
-
 
     public static final int DEFAULT_WIDTH = 200;
     public static final int DEFAULT_HEIGHT = 200;
@@ -36,7 +33,10 @@ public class MorseTranslator extends Canvas {
     private double amplitude;
 
     private Color signalColor;
+
+    private List<TranslateListener> translateListeners;
     private List<EndPlayListener> endPlayListeners;
+
     public MorseTranslator() {
 
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -158,10 +158,6 @@ public class MorseTranslator extends Canvas {
         this.endPlayListeners.remove(listener);
     }
 
-    public void setText(String text) {
-        this.text = text;
-        state = State.READY_TO_TRANSLATE;
-    }
 
     @Override
     public String toString() {
@@ -189,6 +185,12 @@ public class MorseTranslator extends Canvas {
     /*
      * Getters and Setters zone
      */
+
+    public void setText(String text) {
+        this.text = text;
+        state = State.READY_TO_TRANSLATE;
+    }
+
 
     public String getText() {
         return text;
@@ -222,14 +224,6 @@ public class MorseTranslator extends Canvas {
 
     public double getAmplitude() {
         return amplitude;
-    }
-
-    public enum State {
-        WAITING,
-        READY_TO_TRANSLATE,
-        TRANSLATED,
-        PLAYING,
-        TRANSLATE
     }
 
     public State getState() {
