@@ -36,6 +36,7 @@ public class MorseTranslator extends Canvas {
 
     private List<TranslateListener> translateListeners;
     private List<EndPlayListener> endPlayListeners;
+    private State state;
 
     public MorseTranslator() {
 
@@ -55,8 +56,6 @@ public class MorseTranslator extends Canvas {
         signalColor = DEFAULT_SIGNAL_COLOR;
         state = State.WAITING;
     }
-
-    private State state;
 
     public void convert() {
 
@@ -115,7 +114,8 @@ public class MorseTranslator extends Canvas {
 
             @Override
             public void run() {
-                for (signalCursor = 0; signalCursor < signal.length; signalCursor++) {
+
+                for (signalCursor = 0; signalCursor < signal.length && state == State.PLAYING; signalCursor++) {
 
                     StdAudio.play(signal[signalCursor]);
 
@@ -163,6 +163,13 @@ public class MorseTranslator extends Canvas {
         this.endPlayListeners.remove(listener);
     }
 
+    public void stopPlay() {
+
+        // il n'y a pas besoin d'utiliser de synchronized car tous les type de bases sont thread safe en java
+        if (state == State.PLAYING) {
+            state = State.TRANSLATED;
+        }
+    }
 
     @Override
     public String toString() {
@@ -187,21 +194,15 @@ public class MorseTranslator extends Canvas {
         return new String(builder);
     }
 
+    public String getText() {
+        return text;
+    }
+
     /*
      * Getters and Setters zone
      */
     public void setText(String text) {
         this.text = text;
-        state = State.READY_TO_TRANSLATE;
-    }
-
-
-    public String getText() {
-        return text;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = (speed >= 1.0 && speed <= 10.0) ? speed : DEFAULT_SPEED;
         state = State.READY_TO_TRANSLATE;
     }
 
@@ -217,8 +218,8 @@ public class MorseTranslator extends Canvas {
         return speed;
     }
 
-    public void setAmplitude(double amp) {
-        this.amplitude = (amp >= 0.0 && amp <= 1.0) ? amp : DEFAULT_AMP;
+    public void setSpeed(double speed) {
+        this.speed = (speed >= 1.0 && speed <= 10.0) ? speed : DEFAULT_SPEED;
         state = State.READY_TO_TRANSLATE;
     }
 
@@ -228,6 +229,11 @@ public class MorseTranslator extends Canvas {
 
     public double getAmplitude() {
         return amplitude;
+    }
+
+    public void setAmplitude(double amp) {
+        this.amplitude = (amp >= 0.0 && amp <= 1.0) ? amp : DEFAULT_AMP;
+        state = State.READY_TO_TRANSLATE;
     }
 
     public State getState() {

@@ -85,21 +85,17 @@ public class MorseTranslatorBeanInfo extends SimpleBeanInfo {
         return eventSets;     }//GEN-LAST:Events
 
     // Method identifiers//GEN-FIRST:Methods
-    private static final int METHOD_convert0 = 0;
-    private static final int METHOD_play1 = 1;
+    private static final int METHOD_stopPlay0 = 0;
 
     // Method array 
     /*lazy MethodDescriptor*/
     private static MethodDescriptor[] getMdescriptor(){
-        MethodDescriptor[] methods = new MethodDescriptor[2];
+        MethodDescriptor[] methods = new MethodDescriptor[1];
     
         try {
-            methods[METHOD_convert0] = new MethodDescriptor(morse.translator.MorseTranslator.class.getMethod("convert")); // NOI18N
-            methods[METHOD_convert0].setDisplayName ( "Translate" );
-            methods[METHOD_convert0].setShortDescription ( "Translate your text to morse code" );
-            methods[METHOD_play1] = new MethodDescriptor(morse.translator.MorseTranslator.class.getMethod("play")); // NOI18N
-            methods[METHOD_play1].setDisplayName ( "Play" );
-            methods[METHOD_play1].setShortDescription ( "Play the morse signal" );
+            methods[METHOD_stopPlay0] = new MethodDescriptor(morse.translator.MorseTranslator.class.getMethod("stopPlay")); // NOI18N
+            methods[METHOD_stopPlay0].setDisplayName ( "Stop Play" );
+            methods[METHOD_stopPlay0].setShortDescription ( "Stop play and fire events" );
         }
         catch( Exception e) {}//GEN-HEADEREND:Methods
         // Here you can add code for customizing the methods array.

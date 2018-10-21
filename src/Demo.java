@@ -20,6 +20,9 @@ import java.awt.event.KeyEvent;
  */
 public class Demo extends javax.swing.JPanel {
 
+    private static final String STOP_LABEL = "Stop";
+    private static final String PLAY_LABEL = "Play";
+
     private javax.swing.JScrollPane inputScrollPane;
     private javax.swing.JTextArea inputText;
     private MorseTranslator morseTranslator;
@@ -35,7 +38,7 @@ public class Demo extends javax.swing.JPanel {
 
     public Demo() {
         initComponents();
-        autoLockElements();
+        autoElementsManagement();
     }
 
 
@@ -103,7 +106,7 @@ public class Demo extends javax.swing.JPanel {
             }
         });
 
-        playButton.setText("Play");
+        playButton.setText(PLAY_LABEL);
         playButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -199,48 +202,50 @@ public class Demo extends javax.swing.JPanel {
 
     private void inputTextKeyReleased(java.awt.event.KeyEvent evt) {
 
-        System.out.println(inputText.getText());
-
         if (!morseTranslator.getText().equals(inputText.getText())) {
             morseTranslator.setText(inputText.getText());
-            autoLockElements();
+            autoElementsManagement();
         }
     }
 
     private void translateButtonActionPerformed(java.awt.event.ActionEvent evt) {
 
         morseTranslator.convert();
-        autoLockElements();
+        autoElementsManagement();
     }
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {
 
-        morseTranslator.play();
-        autoLockElements();
+        if (morseTranslator.getState() == State.PLAYING) {
+            morseTranslator.stopPlay();
+        } else {
+            morseTranslator.play();
+            autoElementsManagement();
+        }
     }
 
     private void speedStateChanged(javax.swing.event.ChangeEvent ce) {
 
         morseTranslator.setSpeed((double) speedSlider.getMaximum() / speedSlider.getValue());
-        autoLockElements();
+        autoElementsManagement();
     }
 
     private void ampStateChanged(javax.swing.event.ChangeEvent ce) {
 
         morseTranslator.setAmplitude((double) ampSlider.getValue() / ampSlider.getMaximum());
-        autoLockElements();
+        autoElementsManagement();
     }
 
     /* Fonction appelée par l’événement de traduction */
     private void morseTranslatorTranslate(TranslateEvent evt) {
 
         translateText.setText(morseTranslator.getTranslateText()); // On affiche le texte traduit
-        autoLockElements();
+        autoElementsManagement();
     }
 
     private void morseTranslatorEndPlay(EndPlayEvent evt) {
 
-        autoLockElements();
+        autoElementsManagement();
     }
 
     public MorseTranslator getMorseTranslator() {
@@ -249,7 +254,7 @@ public class Demo extends javax.swing.JPanel {
 
 
     /* Rend les composants de la fenêtre accessible à l'utilisateur en fonction du status du MorseTranslator */
-    private void autoLockElements() {
+    private void autoElementsManagement() {
 
         switch (morseTranslator.getState()) {
 
@@ -260,6 +265,7 @@ public class Demo extends javax.swing.JPanel {
                 inputText.setEnabled(true);
                 playButton.setEnabled(false);
                 translateButton.setEnabled(false);
+                playButton.setText(PLAY_LABEL);
                 break;
 
             case PLAYING:
@@ -267,8 +273,9 @@ public class Demo extends javax.swing.JPanel {
                 ampSlider.setEnabled(false);
                 translateText.setEnabled(false);
                 inputText.setEnabled(false);
-                playButton.setEnabled(false);
+                playButton.setEnabled(true);
                 translateButton.setEnabled(false);
+                playButton.setText(STOP_LABEL);
                 break;
 
             case READY_TO_TRANSLATE:
@@ -278,6 +285,7 @@ public class Demo extends javax.swing.JPanel {
                 inputText.setEnabled(true);
                 playButton.setEnabled(false);
                 translateButton.setEnabled(true);
+                playButton.setText(PLAY_LABEL);
                 break;
 
             case TRANSLATED:
@@ -287,6 +295,7 @@ public class Demo extends javax.swing.JPanel {
                 inputText.setEnabled(true);
                 playButton.setEnabled(true);
                 translateButton.setEnabled(false);
+                playButton.setText(PLAY_LABEL);
                 break;
 
             case TRANSLATING:
@@ -296,10 +305,11 @@ public class Demo extends javax.swing.JPanel {
                 inputText.setEnabled(false);
                 playButton.setEnabled(false);
                 translateButton.setEnabled(false);
+                playButton.setText(PLAY_LABEL);
                 break;
 
             default:
-                System.err.println("development error");
+                System.err.println("development error !");
                 System.exit(-1);
                 break;
         }
