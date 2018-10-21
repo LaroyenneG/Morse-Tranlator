@@ -136,8 +136,8 @@ public class Demo extends javax.swing.JPanel {
         inputScrollPane.setViewportView(inputText);
         inputText.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent e) {
-                inputTextKeyPressed(e);
+            public void keyReleased(KeyEvent event) {
+                inputTextKeyReleased(event);
             }
         });
 
@@ -197,9 +197,11 @@ public class Demo extends javax.swing.JPanel {
         );
     }
 
-    private void inputTextKeyPressed(java.awt.event.KeyEvent evt) {
+    private void inputTextKeyReleased(java.awt.event.KeyEvent evt) {
 
-        if (!morseTranslator.getTranslateText().equals(inputText.getText())) {
+        System.out.println(inputText.getText());
+
+        if (!morseTranslator.getText().equals(inputText.getText())) {
             morseTranslator.setText(inputText.getText());
             autoLockElements();
         }
