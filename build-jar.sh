@@ -9,7 +9,7 @@ rm  -r out/
 mkdir -p out/production/Morse-Translator/morse/translator/assets/ 2>/dev/null;
 
 javac -classpath . ./src/morse/translator/*.java ./src/*.java -d out/production/Morse-Translator/;
-cp ./src/morse/translator/assets/morse_code.txt ./out/production/Morse-Translator/morse/translator/assets/morse_code.txt;
+cp ./src/morse/translator/assets/* ./out/production/Morse-Translator/morse/translator/assets/;
 
 
 cp ./document/Morse-Tranlator.pdf ./out/production/Morse-Translator/;
