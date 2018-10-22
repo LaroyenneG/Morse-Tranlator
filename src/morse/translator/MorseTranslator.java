@@ -10,7 +10,6 @@ import java.util.List;
  * Mon composant
  */
 
-
 public class MorseTranslator extends Canvas {
 
     private static final double DEFAULT_AMP = 1.0;
@@ -34,7 +33,7 @@ public class MorseTranslator extends Canvas {
 
     private Color signalColor;
 
-    private List<TranslateListener> translateListeners;
+    private List<TranslatedListener> translatedListeners;
     private List<EndPlayListener> endPlayListeners;
     private State state;
 
@@ -48,7 +47,7 @@ public class MorseTranslator extends Canvas {
 
         signal = new double[0];
 
-        translateListeners = new ArrayList<>();
+        translatedListeners = new ArrayList<>();
         endPlayListeners = new ArrayList<>();
 
         speed = DEFAULT_SPEED;
@@ -71,7 +70,7 @@ public class MorseTranslator extends Canvas {
                 System.gc(); // La construction du signal consomme beaucoup de mémoire temporaire, alors on force un passage du Garbage Collector pour nettoyer la mémoire
 
                 state = State.TRANSLATED;
-                fireTranslateEvent(new TranslateEvent(this));
+                fireTranslatedEvent(new TranslatedEvent(this));
             }
         });
 
@@ -133,43 +132,6 @@ public class MorseTranslator extends Canvas {
         thread.start();
     }
 
-    private void fireTranslateEvent(TranslateEvent event) {
-
-        for (TranslateListener listener : translateListeners) {
-            listener.translate(event);
-        }
-    }
-
-    private void fireEndPlayEvent(EndPlayEvent event) {
-
-        for (EndPlayListener listener : endPlayListeners) {
-            listener.endPlay(event);
-        }
-    }
-
-    public void addTranslateListener(TranslateListener listener) {
-        this.translateListeners.add(listener);
-    }
-
-    public void removeTranslateListener(TranslateListener listener) {
-        this.translateListeners.remove(listener);
-    }
-
-    public void addEndPlayListener(EndPlayListener listener) {
-        this.endPlayListeners.add(listener);
-    }
-
-    public void removeEndPlayListener(EndPlayListener listener) {
-        this.endPlayListeners.remove(listener);
-    }
-
-    public void stopPlay() {
-
-        // il n'y a pas besoin d'utiliser de synchronized car tous les type de bases sont thread safe en java
-        if (state == State.PLAYING) {
-            state = State.TRANSLATED;
-        }
-    }
 
     @Override
     public String toString() {
@@ -194,9 +156,48 @@ public class MorseTranslator extends Canvas {
         return new String(builder);
     }
 
-    public String getText() {
-        return text;
+    /*
+     * Listners
+     */
+
+    private void fireTranslatedEvent(TranslatedEvent event) {
+
+        for (TranslatedListener listener : translatedListeners) {
+            listener.translated(event);
+        }
     }
+
+    private void fireEndPlayEvent(EndPlayEvent event) {
+
+        for (EndPlayListener listener : endPlayListeners) {
+            listener.endPlay(event);
+        }
+    }
+
+    public void addTranslatedListener(TranslatedListener listener) {
+        this.translatedListeners.add(listener);
+    }
+
+    public void removeTranslatedListener(TranslatedListener listener) {
+        this.translatedListeners.remove(listener);
+    }
+
+    public void addEndPlayListener(EndPlayListener listener) {
+        this.endPlayListeners.add(listener);
+    }
+
+    public void removeEndPlayListener(EndPlayListener listener) {
+        this.endPlayListeners.remove(listener);
+    }
+
+    public void stopPlay() {
+
+        // il n'y a pas besoin d'utiliser de synchronized car tous les type de bases sont thread safe en java
+        if (state == State.PLAYING) {
+            state = State.TRANSLATED;
+        }
+    }
+
 
     /*
      * Getters and Setters zone
@@ -238,5 +239,9 @@ public class MorseTranslator extends Canvas {
 
     public State getState() {
         return state;
+    }
+
+    public String getText() {
+        return text;
     }
 }

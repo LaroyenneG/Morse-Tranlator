@@ -85,9 +85,9 @@ public class Demo extends javax.swing.JPanel {
         speedLabel = new javax.swing.JLabel();
 
         morseTranslator.setName("Morse");
-        morseTranslator.addTranslateListener(new TranslateListener() {
+        morseTranslator.addTranslatedListener(new TranslatedListener() {
             @Override
-            public void translate(TranslateEvent event) {
+            public void translated(TranslatedEvent event) {
                 morseTranslatorTranslate(event);
             }
         });
@@ -237,7 +237,7 @@ public class Demo extends javax.swing.JPanel {
     }
 
     /* Fonction appelée par l’événement de traduction */
-    private void morseTranslatorTranslate(TranslateEvent evt) {
+    private void morseTranslatorTranslate(TranslatedEvent evt) {
 
         translateText.setText(morseTranslator.getTranslateText()); // On affiche le texte traduit
         autoElementsManagement();

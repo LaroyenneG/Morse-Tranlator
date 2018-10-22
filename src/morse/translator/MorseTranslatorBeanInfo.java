@@ -17,7 +17,7 @@ public class MorseTranslatorBeanInfo extends SimpleBeanInfo {
     /*lazy BeanDescriptor*/
     private static BeanDescriptor getBdescriptor(){
         BeanDescriptor beanDescriptor = new BeanDescriptor  ( morse.translator.MorseTranslator.class , null ); // NOI18N
-        beanDescriptor.setDisplayName ( "Morse translator" );
+        beanDescriptor.setDisplayName ( "Morse Translator" );
         beanDescriptor.setShortDescription ( "This component allows you to translate texts to morse code " );//GEN-HEADEREND:BeanDescriptor
         // Here you can add code for customizing the BeanDescriptor.
 
@@ -62,7 +62,7 @@ public class MorseTranslatorBeanInfo extends SimpleBeanInfo {
 
     // EventSet identifiers//GEN-FIRST:Events
     private static final int EVENT_endPlayListener = 0;
-    private static final int EVENT_translateListener = 1;
+    private static final int EVENT_translatedListener = 1;
 
     // EventSet array
     /*lazy EventSetDescriptor*/
@@ -73,9 +73,9 @@ public class MorseTranslatorBeanInfo extends SimpleBeanInfo {
             eventSets[EVENT_endPlayListener] = new EventSetDescriptor ( morse.translator.MorseTranslator.class, "endPlayListener", morse.translator.EndPlayListener.class, new String[] {"endPlay"}, "addEndPlayListener", "removeEndPlayListener" ); // NOI18N
             eventSets[EVENT_endPlayListener].setDisplayName ( "End Play Event" );
             eventSets[EVENT_endPlayListener].setShortDescription ( "Genarate an enven when the signal reading is complete" );
-            eventSets[EVENT_translateListener] = new EventSetDescriptor ( morse.translator.MorseTranslator.class, "translateListener", morse.translator.TranslateListener.class, new String[] {"translate"}, "addTranslateListener", "removeTranslateListener" ); // NOI18N
-            eventSets[EVENT_translateListener].setDisplayName ( "Translate Event" );
-            eventSets[EVENT_translateListener].setShortDescription ( "Cause an event when the text is translated" );
+            eventSets[EVENT_translatedListener] = new EventSetDescriptor ( morse.translator.MorseTranslator.class, "translatedListener", morse.translator.TranslatedListener.class, new String[] {"translated"}, "addTranslatedListener", "removeTranslatedListener" ); // NOI18N
+            eventSets[EVENT_translatedListener].setDisplayName ( "Translated Event" );
+            eventSets[EVENT_translatedListener].setShortDescription ( "Generate en event after translate processing" );
         }
         catch(IntrospectionException e) {
             e.printStackTrace();
@@ -85,17 +85,21 @@ public class MorseTranslatorBeanInfo extends SimpleBeanInfo {
         return eventSets;     }//GEN-LAST:Events
 
     // Method identifiers//GEN-FIRST:Methods
-    private static final int METHOD_stopPlay0 = 0;
+    private static final int METHOD_play0 = 0;
+    private static final int METHOD_stopPlay1 = 1;
 
     // Method array 
     /*lazy MethodDescriptor*/
     private static MethodDescriptor[] getMdescriptor(){
-        MethodDescriptor[] methods = new MethodDescriptor[1];
+        MethodDescriptor[] methods = new MethodDescriptor[2];
     
         try {
-            methods[METHOD_stopPlay0] = new MethodDescriptor(morse.translator.MorseTranslator.class.getMethod("stopPlay")); // NOI18N
-            methods[METHOD_stopPlay0].setDisplayName ( "Stop Play" );
-            methods[METHOD_stopPlay0].setShortDescription ( "Stop play and fire events" );
+            methods[METHOD_play0] = new MethodDescriptor(morse.translator.MorseTranslator.class.getMethod("play", new Class[] {})); // NOI18N
+            methods[METHOD_play0].setDisplayName ( "Play" );
+            methods[METHOD_play0].setShortDescription ( "Start listening to the signal" );
+            methods[METHOD_stopPlay1] = new MethodDescriptor(morse.translator.MorseTranslator.class.getMethod("stopPlay", new Class[] {})); // NOI18N
+            methods[METHOD_stopPlay1].setDisplayName ( "Stop playing" );
+            methods[METHOD_stopPlay1].setShortDescription ( "Stop the signal listening" );
         }
         catch( Exception e) {}//GEN-HEADEREND:Methods
         // Here you can add code for customizing the methods array.
