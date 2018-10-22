@@ -27,7 +27,7 @@ ENSISA,\\
     \begin{center}
         \large{Lien vers le logiciel de gestion de versions du projet :} \texttt{https://github.com/LaroyenneG/Morse-Tranlator.git}
         \\[2cm]
-        \textit{Version de java utilisée : \texttt{\underline{Open JDK 1.7.0}}}
+        \textit{Version de java utilisée : \texttt{\underline{Open JDK 1.8.0}}}
     \end{center}
 
     \newpage
@@ -44,7 +44,7 @@ ENSISA,\\
     Durant la phase de traduction, un nouveau texte est créé contenant le code Morse équivalent au texte donné au composant. Un signal analogique sera également construit correspondant au signal audio du message en Morse. Néanmoins, la construction du signal et sa lecture peuvent prendre un temps conséquent. Pour éviter que ces deux fonctionnalités du composant soient bloquante, les traitements sont effectués à l'intérieur de processus léger. Pour informer d'autres composants d'une application que ces opérations sont terminées, la programmation par événement a été utilisée.\\
     Il existe donc deux événements dans l'application :
     \begin{description}
-        \item[\textit{TranslateEvent}] : Événement produit lorsque le processus de traduction et de construction du signal est terminé.
+        \item[\textit{TranslatedEvent}] : Événement produit lorsque le processus de traduction et de construction du signal est terminé.
         \item[\textit{EndPlayEvent}] : Événement produit lorsque le processus de lecture audio est terminé.
     \end{description}
     \paragraph{}
