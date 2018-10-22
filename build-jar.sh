@@ -16,6 +16,6 @@ cp ./document/Morse-Tranlator.pdf ./out/production/Morse-Translator/;
 
 
 cd ./out/production/Morse-Translator/;
-jar cvmf ../../../MANIFEST.MF Morse-Translator.jar *.class ./morse/translator/*.class  ./morse/translator/assets/morse_code.txt ./Morse-Tranlator.pdf ../../../src;
+jar cvmf ../../../MANIFEST.MF Morse-Translator.jar *.class ./morse/translator/*.class  ./morse/translator/assets/* ./Morse-Tranlator.pdf ../../../src;
 
 exit;
