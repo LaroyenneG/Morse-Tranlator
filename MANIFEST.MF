@@ -1,1 +1,4 @@
+Classpath: .
 Main-Class: Demo
+Name: Demo.class
+Java-Bean: True
