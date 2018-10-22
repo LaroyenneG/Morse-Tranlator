@@ -27,7 +27,8 @@ ENSISA,\\
     \begin{center}
         \large{Lien vers le logiciel de gestion de versions du projet :} \texttt{https://github.com/LaroyenneG/Morse-Tranlator.git}
         \\[2cm]
-        \textit{Version de java utilisée : \texttt{\underline{Open JDK 1.8.0}}}
+        \textit{Version de Java utilisée : \texttt{\underline{Open JDK 1.8.0}}}\\
+        \textit{Version de NetBeans utilisée : \texttt{\underline{8.2}}}
     \end{center}
 
     \newpage
@@ -41,7 +42,7 @@ ENSISA,\\
     \paragraph{}
     Le composant "\textit{Morse Translator}" permet de réaliser des traductions de textes simples en code Morse. Il permet également de visualiser et d'écouter les messages traduits en fonction d'une amplitude et d'une vistesse souhaitée.
     \paragraph{}
-    Durant la phase de traduction, un nouveau texte est créé contenant le code Morse équivalent au texte donné au composant. Un signal analogique sera également construit correspondant au signal audio du message en Morse. Néanmoins, la construction du signal et sa lecture peuvent prendre un temps conséquent. Pour éviter que ces deux fonctionnalités du composant soient bloquante, les traitements sont effectués à l'intérieur de processus léger. Pour informer d'autres composants d'une application que ces opérations sont terminées, la programmation par événement a été utilisée.\\
+    Durant la phase de traduction, un nouveau texte est créé contenant le code Morse équivalent au texte donné au composant. Un signal analogique sera également construit correspondant au signal audio du message en Morse. Néanmoins, la construction du signal et sa lecture peuvent prendre un temps conséquent avec des textes de beaucoup de caractères. Pour éviter que ces deux fonctionnalités du composant soient bloquante, les traitements sont effectués à l'intérieur de processus léger. Pour informer d'autres composants d'une application que ces opérations sont terminées, la programmation par événement a été utilisée.\\
     Il existe donc deux événements dans l'application :
     \begin{description}
         \item[\textit{TranslatedEvent}] : Événement produit lorsque le processus de traduction et de construction du signal est terminé.
