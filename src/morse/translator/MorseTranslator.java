@@ -1,6 +1,8 @@
 package morse.translator;
 
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,23 +55,25 @@ public class MorseTranslator extends Canvas {
         speed = DEFAULT_SPEED;
         amplitude = DEFAULT_AMP;
         signalColor = DEFAULT_SIGNAL_COLOR;
-        state = State.WAITING;
+
+        changeState(State.WAITING);
     }
 
     public void convert() {
 
-        state = State.TRANSLATING;
+        changeState(State.TRANSLATING);
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
+
                 signal = null;
                 translateText = MorseTranslatorHelper.encodeText(text);
                 signal = MorseTranslatorHelper.buildSignal(translateText, speed, amplitude);
 
                 System.gc(); // La construction du signal consomme beaucoup de mémoire temporaire, alors on force un passage du Garbage Collector pour nettoyer la mémoire
 
-                state = State.TRANSLATED;
+                changeState(State.TRANSLATED);
                 fireTranslatedEvent(new TranslatedEvent(this));
             }
         });
@@ -83,31 +87,76 @@ public class MorseTranslator extends Canvas {
     }
 
 
+    private void printMessage(Graphics graphics, String text) {
+
+
+        Font font = new Font("Serif", Font.BOLD, 16);
+        graphics.setFont(font);
+
+        FontRenderContext fontRenderContext = new FontRenderContext(null, true, true);
+
+        Rectangle2D stringBounds = font.getStringBounds(text, fontRenderContext);
+
+        int x = (int) ((getSize().width / 2) - (Math.round(stringBounds.getWidth()) / 2) - Math.round(stringBounds.getX()));
+        int y = (int) ((getSize().height / 2) - (Math.round(stringBounds.getHeight()) / 2) - Math.round(stringBounds.getY()));
+
+        graphics.setFont(font);
+        graphics.drawString(text, x, y);
+    }
+
     @Override
     public void paint(Graphics graphics) {
 
-        if (signalCursor < signal.length) {
+        graphics.setColor(signalColor);
 
-            final double COEFFICIENT = 2.0;
+        switch (state) {
 
-            final int WIDTH = getWidth();
-            final int HEIGHT = getHeight();
+            case PLAYING:
 
-            graphics.setColor(signalColor);
+                if (signalCursor < signal.length) {
 
-            final int MIN_SIZE = WIDTH < HEIGHT ? WIDTH : HEIGHT;
+                    final double COEFFICIENT = 2.0;
 
-            int rayon = (int) (signal[signalCursor] * (MIN_SIZE / COEFFICIENT));
+                    final int WIDTH = getWidth();
+                    final int HEIGHT = getHeight();
 
-            for (int r = rayon; r >= 1; r -= COEFFICIENT) {
-                graphics.drawOval(WIDTH / 2 - r, HEIGHT / 2 - r, 2 * r, 2 * r);
-            }
+
+                    final int MIN_SIZE = WIDTH < HEIGHT ? WIDTH : HEIGHT;
+
+                    int rayon = (int) (signal[signalCursor] * (MIN_SIZE / COEFFICIENT));
+
+                    for (int r = rayon; r >= 1; r -= COEFFICIENT) {
+                        graphics.drawOval(WIDTH / 2 - r, HEIGHT / 2 - r, 2 * r, 2 * r);
+                    }
+                }
+                break;
+
+            case WAITING:
+                printMessage(graphics, "Enter a text please...");
+                break;
+
+            case TRANSLATED:
+                printMessage(graphics, "Text translated");
+                break;
+
+            case READY_TO_TRANSLATE:
+                printMessage(graphics, "You can translate your text");
+                break;
+
+            case TRANSLATING:
+                printMessage(graphics, "Please wait...");
+                break;
+
+            default:
+                System.err.println("development error");
+                System.exit(-1);
+                break;
         }
     }
 
     public void play() {
 
-        state = State.PLAYING;
+        changeState(State.PLAYING);
 
         Thread thread = new Thread(new Runnable() {
 
@@ -123,7 +172,7 @@ public class MorseTranslator extends Canvas {
 
                 signalCursor = 0;
 
-                state = State.TRANSLATED;
+                changeState(State.TRANSLATED);
 
                 fireEndPlayEvent(new EndPlayEvent(this));
             }
@@ -132,6 +181,14 @@ public class MorseTranslator extends Canvas {
         thread.start();
     }
 
+
+    public void stopPlay() {
+
+        // il n'y a pas besoin d'utiliser de synchronized car tous les type de bases sont thread safe en java
+        if (state == State.PLAYING) {
+            changeState(State.TRANSLATED);
+        }
+    }
 
     @Override
     public String toString() {
@@ -146,8 +203,10 @@ public class MorseTranslator extends Canvas {
         builder.append(text);
         builder.append("\tSpeed :");
         builder.append(speed);
+        builder.append("\tAmplitude :");
+        builder.append(amplitude);
         builder.append('\n');
-        builder.append("signal :\n");
+        builder.append("Signal :\n");
         for (double s : signal) {
             builder.append(df.format(s).replace('.', ','));
             builder.append('\n');
@@ -190,21 +249,18 @@ public class MorseTranslator extends Canvas {
         this.endPlayListeners.remove(listener);
     }
 
-    public void stopPlay() {
 
-        // il n'y a pas besoin d'utiliser de synchronized car tous les type de bases sont thread safe en java
-        if (state == State.PLAYING) {
-            state = State.TRANSLATED;
-        }
+    private void changeState(State state) {
+        this.state = state;
+        repaint();
     }
-
 
     /*
      * Getters and Setters zone
      */
     public void setText(String text) {
         this.text = text;
-        state = State.READY_TO_TRANSLATE;
+        changeState(State.READY_TO_TRANSLATE);
     }
 
     public Color getSignalColor() {
@@ -221,7 +277,7 @@ public class MorseTranslator extends Canvas {
 
     public void setSpeed(double speed) {
         this.speed = (speed >= 1.0 && speed <= 10.0) ? speed : DEFAULT_SPEED;
-        state = State.READY_TO_TRANSLATE;
+        changeState(State.READY_TO_TRANSLATE);
     }
 
     public String getTranslateText() {
@@ -234,7 +290,7 @@ public class MorseTranslator extends Canvas {
 
     public void setAmplitude(double amp) {
         this.amplitude = (amp >= 0.0 && amp <= 1.0) ? amp : DEFAULT_AMP;
-        state = State.READY_TO_TRANSLATE;
+        changeState(State.READY_TO_TRANSLATE);
     }
 
     public State getState() {
