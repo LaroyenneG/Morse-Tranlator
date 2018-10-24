@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 
@@ -181,8 +179,6 @@ public final class MorseTranslatorHelper {
         final int textLen = text.length();
 
         final double[][] signals = new double[textLen][];
-
-        final List<Thread> builderThreads = new LinkedList<>();
 
         for (int i = 0; i < textLen; i++) {
 

@@ -39,8 +39,8 @@ ENSISA,\\
     \newpage
 
     \section{Présentation}
-    
-      \subsection{Aperçu}
+
+    \subsection{Aperçu}
     \begin{figure}[H]
         \begin{center}
             \includegraphics[scale=0.7]{descpicture.png}
@@ -56,20 +56,38 @@ ENSISA,\\
             \label{Interface graphique du composant}
         \end{center}
     \end{figure}
-    
-    \subsection{Description}
+
+    \subsection{Description conceptuel}
     \paragraph{}
     Le composant "\textit{Morse Translator}" permet de réaliser des traductions de textes simples en code Morse. Il permet également de visualiser et d'écouter les messages traduits en fonction d'une amplitude et d'une vistesse souhaitée.
     \paragraph{}
-    Durant la phase de traduction, un nouveau texte est créé contenant le code Morse équivalent au texte donné au composant. Un signal analogique sera également construit correspondant au signal audio du message en Morse. Néanmoins, la construction du signal et sa lecture peuvent prendre un temps conséquent avec des textes de beaucoup de caractères. Pour éviter que ces deux fonctionnalités du composant soient bloquante, les traitements sont effectués à l'intérieur de processus léger. Pour informer d'autres composants d'une application que ces opérations sont terminées, la programmation par événement a été utilisée.\\
-    Il existe donc deux événements dans l'application :
+    Durant la phase de traduction, un nouveau texte est créé contenant le code Morse équivalent au texte donné au composant. Un signal analogique échantillonné sera également construit correspondant au signal audio du message en Morse. Néanmoins, la construction du signal et sa lecture peuvent prendre un temps conséquent avec des textes de beaucoup de caractères. Pour éviter que ces deux fonctionnalités du composant soient bloquante, les traitements sont effectués à l'intérieur de processus léger. Pour informer d'autres composants d'une application que ces opérations sont terminées, la programmation par événement a été utilisée. Il existe donc deux événements dans l'application, permetant chacun d'informer de la fin d'un type de processus.\\
+    Dans le cas de l'interface de démonstration, la programmation asynchrone du composant permet à l'interface de ne jamais se retrouver dans un état "bloqué" lorsqu'elle interagit avec lui.
+
+    \subsection{Description des éléments techniques}
+    \noindent
+    Propriétés du composant :
+    \begin{description}
+        \item[\textit{amplitude}] : Amplitude du signal (entre 0 et 1).
+        \item [\textit{speed}] : Durée de lecture d'un mot (entre 1 et 10).
+        \item[\textit{signalColor}] : Couleur du signal et du texte affiché sur le composant.
+        \item[\textit{text}] : Texte à traduire.
+        \item[\textit{translateText}] : Texte traduit par le composant.
+        \item[\textit{state}] : Informe sur l'état du composant (traduit, non traduit...).
+    \end{description}
+    Méthodes :
+    \begin{description}
+        \item[\textit{convert}] : Lance la traduction.
+        \item[\textit{play}] : Lance l'écoute du signal.
+        \item[\textit{stopPlay}] : Stop l'écoute du signal.
+    \end{description}
+    Évenements du composant :
     \begin{description}
         \item[\textit{TranslatedEvent}] : Événement produit lorsque le processus de traduction et de construction du signal est terminé.
         \item[\textit{EndPlayEvent}] : Événement produit lorsque le processus de lecture audio est terminé.
     \end{description}
-    \paragraph{}
-    Dans le cas de l'interface de démonstration, la programmation asynchrone du composant permet à l'interface de ne jamais se retrouver dans un état "bloqué" lorsqu'elle interagit avec lui. La programmation par événements permet de réaliser des actions sur d'autres composants dès lors qu'un des processus est terminé (comme ajouter le texte traduit à une \textit{JTextArea} ou déverrouiller des boutons par exemple).
-    
+
+
     \subsection{Utilisation de l'interface de démonstration}
     Pour utiliser l'interface vous devez entrer du texte dans la deuxième zone de texte. Une fois votre texte saisi vous pouvez appuyer sur le bouton "\textit{Translate}". Le code Morse correspondant apparaîtra dans la première zone de texte. Vous pourrez également écouter et visualiser le signal correspondent en cliquant sur le bouton "\textit{Play}".\\
     \textbf{Attention} si vous modifiez les paramètres d'amplitude ou de vitesse vous devrez recliquer sur le bouton "\textit{Translate}" pour régénérer le nouveau signal analogique.
