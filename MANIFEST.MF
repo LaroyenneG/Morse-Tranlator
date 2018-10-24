@@ -1,4 +1,7 @@
+Manifest-Version: 1.0
+Created-By: Guillaume Laroyenne
 Class-Path: .
 Main-Class: Demo
-Name: Demo.class
+
+Name: morse/translator/MorseTranslator.class
 Java-Bean: True
